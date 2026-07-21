@@ -12,7 +12,7 @@ else
   puts "Creating target #{target_name}..."
 
   # Create the target
-  target = project.new_target(:app_extension, target_name)
+  target = project.new_target(:app_extension, target_name, :ios)
   target.product_type = 'com.apple.product-type.app-extension'
   target.bundle_id = 'com.abuhashim.khalaf_quran.QuranWidget'
 
