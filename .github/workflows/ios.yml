@@ -17,6 +17,11 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Fix CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod repo update
+
       - name: Install dependencies
         run: |
           flutter clean
@@ -28,7 +33,7 @@ jobs:
       - name: Add Widget Target
         run: |
           sudo gem install xcodeproj
-          ruby ios/add_widget_target.rb
+          ruby add_widget_target.rb
         working-directory: ios
 
       - name: Build unsigned iOS release
