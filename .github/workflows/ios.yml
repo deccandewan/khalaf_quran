@@ -35,6 +35,29 @@ jobs:
           sudo gem install xcodeproj
           ruby add_widget_target.rb
         working-directory: ios
+      
+      - name: Debug - list all targets and product names
+  run: |
+    echo "--- Runner.xcodeproj targets ---"
+    ruby -rxcodeproj -e '
+      p = Xcodeproj::Project.open("Runner.xcodeproj")
+      p.targets.each do |t|
+        puts "#{t.name} | type=#{t.product_type}"
+        t.build_configurations.each do |c|
+          puts "  #{c.name}: PRODUCT_NAME=#{c.build_settings["PRODUCT_NAME"].inspect}"
+        end
+      end
+    '
+    echo "--- Pods.xcodeproj targets (app-extension type only) ---"
+    ruby -rxcodeproj -e '
+      p = Xcodeproj::Project.open("Pods/Pods.xcodeproj")
+      p.targets.each do |t|
+        next unless t.product_type.to_s.include?("app-extension")
+        puts "#{t.name} | type=#{t.product_type}"
+      end
+    '
+  working-directory: ios
+
 
       - name: Build unsigned iOS release
         run: flutter build ios --release --no-codesign -v
