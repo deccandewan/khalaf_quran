@@ -33,9 +33,11 @@ begin
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
 
-    # Find or create a group for the widget source files
+    # Find or create a group for the widget source files.
+    # Leave source_tree as the default '<group>' so the path resolves
+    # relative to the parent (Runner) group's own path.
     widget_group = project.main_group.find_subpath('Runner/Widgets', true)
-    widget_group.set_source_tree('SOURCE_ROOT')
+    widget_group.set_path('Widgets') if widget_group.path.nil?
 
     # Add source files (skip Info.plist/entitlements, those aren't build files)
     widget_files = Dir.glob('Runner/Widgets/*.swift')
@@ -51,7 +53,7 @@ begin
     # Add target dependency to the main Runner target
     runner_target = project.targets.find { |t| t.name == 'Runner' }
     if runner_target
-      runner_target.add_target_dependency(target)
+      runner_target.add_dependency(target)
       puts "Added #{target_name} as dependency to Runner target."
     else
       puts "Warning: Runner target not found, could not add dependency."
