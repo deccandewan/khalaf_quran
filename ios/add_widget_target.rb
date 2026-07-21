@@ -26,8 +26,10 @@ begin
     # Set the product type (this is often set by the new_target call but good to be explicit)
     target.product_type = 'com.apple.product-type.app-extension'
 
-    # IMPORTANT: Bundle Identifier is set via build_settings, NOT a direct property
-    target.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.abuhashim.khalaf_quran.QuranWidget'
+    # Set build settings for both configurations
+    ['Debug', 'Release'].each do |config|
+      target.build_settings(config)['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.abuhashim.khalaf_quran.QuranWidget'
+    end
 
     # Add source files
     widget_files = Dir.glob('Runner/Widgets/*.swift')
