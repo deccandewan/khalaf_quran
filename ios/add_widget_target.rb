@@ -31,6 +31,7 @@ begin
       config.build_settings['SWIFT_VERSION'] = '5.0'
       config.build_settings['TARGETED_DEVICE_FAMILY'] = '1,2'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      config.build_settings['SKIP_INSTALL'] = 'YES'
     end
 
     # Find or create a group for the widget source files.
