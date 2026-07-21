@@ -52,7 +52,7 @@ struct QuranWidgetProvider: TimelineProvider {
 struct QuranWidget: Widget {
     let kind: String = "com.abuhashim.khalaf_quran.quranwidget"
 
-    var body: WidgetConfiguration {
+    var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: QuranWidgetProvider()) { entry in
             QuranWidgetView(
                 prayers: entry.prayers,
