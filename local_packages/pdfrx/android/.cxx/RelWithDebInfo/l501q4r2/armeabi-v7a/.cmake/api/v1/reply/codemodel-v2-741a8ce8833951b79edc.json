@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-RelWithDebInfo-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6.0"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "shared",
+					"jsonFile" : "directory-shared-RelWithDebInfo-3f92a55a50758893ef07.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/mnt/SSD/khalaf_quran/local_packages/pdfrx/src",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "pdfrx"
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "pdfrx_library",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "pdfrx::@b1f7512934231ee3f25d",
+					"jsonFile" : "target-pdfrx-RelWithDebInfo-996fd05e99acd01ed77e.json",
+					"name" : "pdfrx",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/l501q4r2/armeabi-v7a",
+		"source" : "/mnt/SSD/khalaf_quran/local_packages/pdfrx/android"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

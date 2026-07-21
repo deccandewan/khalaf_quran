@@ -1,0 +1,21 @@
+app-id: com.khalaf.quran
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: khalaf_quran
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+modules:
+  - name: khalaf_quran
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/bin
+      - cp -r * /app/bin/
+      - chmod +x /app/bin/khalaf_quran
+    sources:
+      - type: dir
+        path: khalaf_quran_bundle

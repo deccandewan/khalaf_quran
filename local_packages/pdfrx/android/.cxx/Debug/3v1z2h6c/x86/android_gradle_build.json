@@ -1,0 +1,41 @@
+{
+  "buildFiles": [
+    "/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/CMakeLists.txt",
+    "/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/src/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/faraz/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/3v1z2h6c/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/faraz/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/3v1z2h6c/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "pdfrx::@b1f7512934231ee3f25d": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "pdfrx",
+      "output": "/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/Debug/3v1z2h6c/obj/x86/libpdfrx.so",
+      "runtimeFiles": [
+        "/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.lib/latest/x86/libpdfium.so"
+      ]
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/home/faraz/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/home/faraz/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

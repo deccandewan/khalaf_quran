@@ -1,0 +1,5 @@
+/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/5j335w6v/x86/CMakeFiles/edit_cache.dir
+/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/5j335w6v/x86/CMakeFiles/rebuild_cache.dir
+/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/5j335w6v/x86/shared/CMakeFiles/pdfrx.dir
+/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/5j335w6v/x86/shared/CMakeFiles/edit_cache.dir
+/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/5j335w6v/x86/shared/CMakeFiles/rebuild_cache.dir

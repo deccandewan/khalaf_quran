@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Year -->
+    <dimen name="widget_year_text_size">12sp</dimen>
+    <dimen name="widget_year_text_size_small">11sp</dimen>
+
+    <!-- Day -->
+    <dimen name="widget_day_text_size_large">44sp</dimen>
+    <dimen name="widget_day_text_size_small">42sp</dimen>
+
+    <!-- Month -->
+    <dimen name="widget_month_text_size_large">16sp</dimen>
+    <dimen name="widget_month_text_size_small">13sp</dimen>
+
+    <!-- Until Label -->
+    <dimen name="widget_until_text_size">8sp</dimen>
+
+    <!-- Countdown -->
+    <dimen name="widget_countdown_text_size_large">26sp</dimen>
+    <dimen name="widget_countdown_text_size_small">22sp</dimen>
+
+    <!-- Next Prayer Pill -->
+    <dimen name="widget_next_name_text_size">11sp</dimen>
+
+    <!-- Prayer Grid Labels -->
+    <dimen name="widget_prayer_label_text_size">11sp</dimen>
+    <dimen name="widget_prayer_time_text_size">14sp</dimen>
+
+    <!-- Sun labels/times -->
+    <dimen name="widget_sun_label_text_size">10sp</dimen>
+    <dimen name="widget_sun_time_text_size">11sp</dimen>
+</resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Horizon line -->
+    <path
+        android:pathData="M2,14 H22"
+        android:strokeColor="#80C9883A"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+
+    <!-- Sun circle -->
+    <path
+        android:pathData="M12,10 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"
+        android:fillColor="#99C9883A" />
+
+    <!-- Rays: top, top-left, top-right, left, right -->
+    <path
+        android:pathData="M12,5.5 V4"
+        android:strokeColor="#80C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M8.4,7.4 L7.3,6.3"
+        android:strokeColor="#80C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M15.6,7.4 L16.7,6.3"
+        android:strokeColor="#80C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M6.5,10 H5"
+        android:strokeColor="#80C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M17.5,10 H19"
+        android:strokeColor="#80C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round" />
+
+    <!-- Upward arrow below horizon -->
+    <path
+        android:pathData="M12,16 L10,19 M12,16 L14,19"
+        android:strokeColor="#99C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M12,16 V20"
+        android:strokeColor="#99C9883A"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round" />
+</vector>

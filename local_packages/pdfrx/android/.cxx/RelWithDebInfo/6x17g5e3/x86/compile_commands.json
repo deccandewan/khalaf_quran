@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/6x17g5e3/x86",
+  "command": "/home/faraz/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=i686-none-linux-android21 --sysroot=/home/faraz/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot -DDART_SHARED_LIB -Dpdfrx_EXPORTS -I/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.lib/latest/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -g -DNDEBUG -fPIC -o shared/CMakeFiles/pdfrx.dir/pdfium_interop.cpp.o -c /run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/src/pdfium_interop.cpp",
+  "file": "/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/src/pdfium_interop.cpp"
+}
+]

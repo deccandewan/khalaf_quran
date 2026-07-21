@@ -1,0 +1,4 @@
+# ninja log v5
+0	521	1781614978256599700	shared/CMakeFiles/pdfrx.dir/pdfium_interop.cpp.o	405f5e2c2f19cbb8
+584	614	1781614978361340000	/mnt/SSD/khalaf_quran/build/pdfrx/intermediates/cxx/Debug/5j335w6v/obj/x86_64/libpdfrx.so	db466609e78492e5
+4	54	1781621806839120600	/mnt/SSD/khalaf_quran/build/pdfrx/intermediates/cxx/Debug/5j335w6v/obj/x86_64/libpdfrx.so	db466609e78492e5

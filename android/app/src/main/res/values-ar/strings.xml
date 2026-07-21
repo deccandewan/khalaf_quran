@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_until">حتى</string>
+    <string name="widget_sunrise">الشروق</string>
+    <string name="widget_sunset">الغروب</string>
+    <string name="lbl_fajr">الفجر</string>
+    <string name="lbl_dhuhr">الظهر</string>
+    <string name="lbl_asr">العصر</string>
+    <string name="lbl_maghrib">المغرب</string>
+    <string name="lbl_isha">العشاء</string>
+</resources>

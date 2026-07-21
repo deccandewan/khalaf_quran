@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Khalaf Quran Widget</string>
+    <string name="widget_until">UNTIL</string>
+    <string name="widget_sunrise">Sunrise</string>
+    <string name="widget_sunset">Sunset</string>
+    <string name="lbl_fajr">Fajr</string>
+    <string name="lbl_dhuhr">Dhuhr</string>
+    <string name="lbl_asr">Asr</string>
+    <string name="lbl_maghrib">Maghrib</string>
+    <string name="lbl_isha">Isha</string>
+    <string name="ayah_widget_description">Random Ayah Widget</string>
+</resources>

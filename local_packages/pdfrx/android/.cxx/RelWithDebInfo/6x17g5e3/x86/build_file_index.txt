@@ -1,0 +1,2 @@
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/CMakeLists.txt
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/src/CMakeLists.txt

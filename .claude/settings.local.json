@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -n '1,288p' lib/main.dart)",
+      "Bash(sed -n '1172,10201p' lib/main.dart)",
+      "Bash(grep -nC 5 \"onTap\" lib/main.dart)",
+      "Bash(flutter run *)",
+      "Bash(grep *)",
+      "WebSearch",
+      "Bash(flutter doctor *)",
+      "Bash(flutter build *)",
+      "Bash(flutter pub *)",
+      "Bash(flutter devices *)"
+    ]
+  }
+}

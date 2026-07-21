@@ -1,0 +1,31 @@
+# Khalaf Quran App Features
+
+## 📖 Quran Reading Experience
+- **Optimized PDF Reader**: Full-screen viewer with a dual-pass rendering strategy (Fast vs. Quality) based on a pixel budget for smooth performance.
+- **Reading Tools**: Double-tap zoom, lock-scroll mode, and a jump-to-page dialog.
+- **Smart Navigation**: Auto-hiding interface bars and a "Continue Reading" banner to quickly resume from the last read page.
+- **Bookmarks**: Add bookmarks with optional custom labels.
+- **Reading Analytics**: Integrated session tracking with a daily reading streak and a visual activity heatmap.
+- **Reading Goals**: Set and track daily minute and total hour reading targets.
+
+## 🎧 Audio & Recitation
+- **Reciter**: Features Abd Al-Rashid Sufi (Riwayat Khalaf an Hamzah).
+- **Flexible Playback**: Support for single-surah playback, auto-play (playlist), and single-track repeat.
+- **Offline Mode**: Ability to download individual surahs or bulk-download all 114 surahs for offline use.
+- **Audio Management**:
+    - Custom download location selection via Android SAF.
+    - Detailed audio bottom-sheet with a 3D ListWheelScrollView for surah selection.
+    - Collapsible mini audio bar accessible from both the home screen and the reader.
+- **Advanced Controls**: Draggable seek bar, 10s skip/rewind, and a sleep timer with a live countdown.
+- **Persistence**: Audio playback position is saved automatically when paused or when the app enters the background.
+
+## 🛠️ Utility & Customization
+- **Multilingual Support**: Full localization for English, Arabic, and Urdu, including localized numeral systems.
+- **Visual Tuning**: Render quality slider (150–800 DPI) to balance clarity and performance.
+- **Notifications**:
+    - Persistent playback notification with remote controls.
+    - Up to 3 customizable daily reading reminders, delivering curated ayahs (including Arabic text and English translation) from a library of 107 significant verses.
+- **Home Screen**: Three-way navigation (Surah, Juz, Hizb) with a global search and landscape-mode sidebar.
+- **App Maintenance**: Integrated update checker that polls GitHub Releases and handles background APK downloads.
+- **User Experience**: High-quality haptic feedback and a 4-phase animated splash screen.
+- **System Integration**: Wakelock enabled during reading and adaptive status bar styling.

@@ -1,0 +1,5 @@
+/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/512i5l5b/x86/CMakeFiles/edit_cache.dir
+/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/512i5l5b/x86/CMakeFiles/rebuild_cache.dir
+/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/512i5l5b/x86/shared/CMakeFiles/pdfrx.dir
+/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/512i5l5b/x86/shared/CMakeFiles/edit_cache.dir
+/home/faraz/Desktop/Apps/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/512i5l5b/x86/shared/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,18 @@
+                        -H/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=21
+-DANDROID_PLATFORM=android-21
+-DANDROID_ABI=armeabi-v7a
+-DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
+-DANDROID_NDK=/home/faraz/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_ANDROID_NDK=/home/faraz/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_TOOLCHAIN_FILE=/home/faraz/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/home/faraz/Android/Sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/5b1z6y53/obj/armeabi-v7a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/5b1z6y53/obj/armeabi-v7a
+-DCMAKE_BUILD_TYPE=RelWithDebInfo
+-B/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android/.cxx/RelWithDebInfo/5b1z6y53/armeabi-v7a
+-GNinja
+                        Build command args: []
+                        Version: 2

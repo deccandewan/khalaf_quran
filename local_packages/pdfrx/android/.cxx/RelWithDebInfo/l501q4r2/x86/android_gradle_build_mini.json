@@ -1,0 +1,30 @@
+{
+  "buildFiles": [
+    "/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/CMakeLists.txt",
+    "/mnt/SSD/khalaf_quran/local_packages/pdfrx/src/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/faraz/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/l501q4r2/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/faraz/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/RelWithDebInfo/l501q4r2/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "pdfrx::@b1f7512934231ee3f25d": {
+      "artifactName": "pdfrx",
+      "abi": "x86",
+      "output": "/mnt/SSD/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/l501q4r2/obj/x86/libpdfrx.so",
+      "runtimeFiles": [
+        "/mnt/SSD/khalaf_quran/local_packages/pdfrx/android/.lib/latest/x86/libpdfium.so"
+      ]
+    }
+  }
+}

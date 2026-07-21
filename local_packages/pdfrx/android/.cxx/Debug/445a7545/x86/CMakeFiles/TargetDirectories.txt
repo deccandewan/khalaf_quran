@@ -1,0 +1,5 @@
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/445a7545/x86/CMakeFiles/edit_cache.dir
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/445a7545/x86/CMakeFiles/rebuild_cache.dir
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/445a7545/x86/shared/CMakeFiles/pdfrx.dir
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/445a7545/x86/shared/CMakeFiles/edit_cache.dir
+/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/445a7545/x86/shared/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,5 @@
+/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android/.cxx/RelWithDebInfo/5b1z6y53/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android/.cxx/RelWithDebInfo/5b1z6y53/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android/.cxx/RelWithDebInfo/5b1z6y53/arm64-v8a/shared/CMakeFiles/pdfrx.dir
+/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android/.cxx/RelWithDebInfo/5b1z6y53/arm64-v8a/shared/CMakeFiles/edit_cache.dir
+/home/faraz/.pub-cache/hosted/pub.dev/pdfrx-1.3.5/android/.cxx/RelWithDebInfo/5b1z6y53/arm64-v8a/shared/CMakeFiles/rebuild_cache.dir

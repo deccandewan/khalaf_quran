@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6.0"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "shared",
+					"jsonFile" : "directory-shared-Debug-4ac4363d29cd28476117.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/src",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "pdfrx"
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "pdfrx_library",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "pdfrx::@b1f7512934231ee3f25d",
+					"jsonFile" : "target-pdfrx-Debug-36c6d3c6ca196d45246d.json",
+					"name" : "pdfrx",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android/.cxx/Debug/445a7545/x86_64",
+		"source" : "/run/media/faraz/SSD/khalaf_quran/local_packages/pdfrx/android"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

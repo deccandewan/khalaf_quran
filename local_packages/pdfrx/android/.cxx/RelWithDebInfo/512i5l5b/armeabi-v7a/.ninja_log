@@ -1,0 +1,19 @@
+# ninja log v5
+0	483	1780295069112031340	shared/CMakeFiles/pdfrx.dir/pdfium_interop.cpp.o	ad136634a41f6865
+487	521	1780295069156033094	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	32	1780587818336013142	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	40	1780595865626828085	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	31	1780652547785592603	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+3	32	1780731862720789443	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+4	43	1780732612425626695	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	40	1780737565433069845	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+3	41	1780738873338538304	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+5	57	1780739681773584091	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	38	1780754142746134793	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+3	42	1780756112772136725	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	31	1780763488054482460	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+5	32	1780763586155106272	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	29	1780764016566849216	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	37	1780826501263779139	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+4	40	1781079042652757848	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de
+2	53	1781097947071525629	/home/faraz/Desktop/Apps/khalaf_quran/build/pdfrx/intermediates/cxx/RelWithDebInfo/512i5l5b/obj/armeabi-v7a/libpdfrx.so	d387fff5c558b1de

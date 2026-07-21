@@ -1,0 +1,15 @@
+{
+  "models": [
+    {
+      "title": "Qwen 4B Chat",
+      "provider": "ollama",
+      "model": "qwen3.5:4b",
+      "requestOptions": {
+        "extraBodyProperties": {
+          "think": false
+        }
+      }
+    }
+  ],
+  "tabAutocompleteModel": null
+}

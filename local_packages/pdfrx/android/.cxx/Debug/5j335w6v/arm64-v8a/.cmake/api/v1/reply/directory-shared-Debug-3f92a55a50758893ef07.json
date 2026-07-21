@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "shared",
+		"source" : "/mnt/SSD/khalaf_quran/local_packages/pdfrx/src"
+	}
+}
