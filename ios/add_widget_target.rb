@@ -29,6 +29,7 @@ begin
       config.build_settings['PRODUCT_NAME'] = target_name
       config.build_settings['INFOPLIST_FILE'] = 'Runner/Widgets/Info.plist'
       config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Widgets/QuranWidget.entitlements'
+      config.build_settings['CODE_SIGN_STYLE'] = 'Manual'
       config.build_settings['SWIFT_VERSION'] = '5.9'
       config.build_settings['TARGETED_DEVICE_FAMILY'] = '1,2'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
@@ -45,11 +46,20 @@ begin
     widget_files = Dir.glob('Runner/Widgets/*.swift')
     puts "Found widget files: #{widget_files.join(', ')}"
 
+    # Get the sources build phase (the phase that actually compiles the code)
+    sources_phase = target.sources_build_phase
+
     widget_files.each do |file|
       file_name = File.basename(file)
       file_ref = widget_group.files.find { |f| f.path == file_name }
       file_ref ||= widget_group.new_file(file_name)
+
+      # 1. Add to the target's file references
       target.add_file_references([file_ref])
+
+      # 2. Explicitly add to the Compile Sources phase
+      # This ensures the Swift compiler actually builds these files into the binary
+      sources_phase.add_build_file(file_ref)
     end
 
     # Add target dependency to the main Runner target
