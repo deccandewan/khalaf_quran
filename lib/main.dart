@@ -3127,7 +3127,7 @@ class AudioService with WidgetsBindingObserver {
     final handler = await AudioService.init(
       builder: () => QuranAudioHandler(),
       androidAudioConfigs: const AndroidAudioConfiguration(
-        androidNotificationChannel la_id: 'khalaf_audio_channel',
+        androidNotificationChannelId: 'khalaf_audio_channel',
         androidNotificationChannelName: 'Khalaf Quran Audio',
         androidNotificationDefaultChannelId: 'khalaf_audio_channel',
         androidStopForegroundOnPause: true,
