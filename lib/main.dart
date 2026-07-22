@@ -2660,7 +2660,11 @@ class AudioNotificationService {
 
     const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = DarwinInitializationSettings();
+    const iosSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     const initSettings =
         InitializationSettings(android: androidSettings, iOS: iosSettings);
 
@@ -2668,6 +2672,18 @@ class AudioNotificationService {
       initSettings,
       onDidReceiveNotificationResponse: _onNotificationResponse,
     );
+
+    // Request iOS permissions explicitly
+    if (Platform.isIOS) {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    }
 
     // Initialize timezone data so scheduled notifications fire at the correct
     // local time on every device regardless of timezone.
@@ -2790,7 +2806,11 @@ class AudioNotificationService {
         ],
         largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       );
-      const iosDetails = DarwinNotificationDetails();
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: false,
+      );
       final details =
           NotificationDetails(android: androidDetails, iOS: iosDetails);
       await _plugin.show(
