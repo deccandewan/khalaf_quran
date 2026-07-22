@@ -98,3 +98,40 @@ struct PrayerColumn: View {
         .cornerRadius(4)
     }
 }
+
+struct QuranAyahWidgetView: View {
+    var ayah: AyahData?
+
+    var body: some View {
+        VStack(alignment: .center, spacing: 12) {
+            if let ayah = ayah {
+                Text(ayah.text)
+                    .font(.system(size: 16, weight: .medium, design: .serif))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(4)
+                    .padding(.horizontal)
+
+                HStack {
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        Text(ayah.surah)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white.opacity(0.8))
+                        Text("Ayah \(ayah.ayahNum)")
+                            .font(.system(size: 10))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                }
+                .padding(.trailing, 12)
+                .padding(.bottom, 8)
+            } else {
+                Text("Loading Ayah...")
+                    .foregroundColor(.white.opacity(0.6))
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 0.05, green: 0.18, blue: 0.05)) // Same Dark Green Theme
+    }
+}

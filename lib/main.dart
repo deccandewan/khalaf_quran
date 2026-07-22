@@ -1663,6 +1663,11 @@ Future<void> _updateWidgetPrayerTimes() async {
   try {
     await HomeWidget.updateWidget(androidName: 'QuranWidgetProvider');
     await HomeWidget.updateWidget(androidName: 'QuranWidgetProviderLarge');
+
+    // Update iOS widgets by their 'kind' identifiers
+    await HomeWidget.updateWidget(iOSName: 'com.abuhashim.khalafquran.quranwidget.small');
+    await HomeWidget.updateWidget(iOSName: 'com.abuhashim.khalafquran.quranwidget.large');
+    await HomeWidget.updateWidget(iOSName: 'com.abuhashim.khalafquran.ayahwidget');
   } catch (e) {
     debugPrint('QuranApp: Error updating widget: $e');
   }
@@ -2663,9 +2668,9 @@ class AudioNotificationService {
     const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
     );
     const initSettings =
         InitializationSettings(android: androidSettings, iOS: iosSettings);
@@ -2677,7 +2682,7 @@ class AudioNotificationService {
 
     // Request iOS permissions explicitly
     if (Platform.isIOS) {
-      await _plugin
+      final bool? granted = await _plugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
@@ -2685,6 +2690,7 @@ class AudioNotificationService {
             badge: true,
             sound: true,
           );
+      debugPrint('iOS Notification Permissions Granted: $granted');
     }
 
     // Initialize timezone data so scheduled notifications fire at the correct

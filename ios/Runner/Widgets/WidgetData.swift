@@ -7,6 +7,12 @@ struct PrayerTime {
     let isNext: Bool
 }
 
+struct AyahData {
+    let text: String
+    let surah: String
+    let ayahNum: Int
+}
+
 struct WidgetData {
     static let appGroupId = "com.abuhashim.khalafquran"
 
@@ -25,7 +31,6 @@ struct WidgetData {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let today = dateFormatter.string(from: Date())
 
-        // Check cache first
         if let cached = UserDefaults(suiteName: appGroupId)?.data(forKey: "cached_prayers_\(today)"),
            let decoded = try? JSONDecoder().decode([PrayerTime].self, from: cached) {
             completion(decoded, UserDefaults(suiteName: appGroupId)?.string(forKey: "sunrise_\(today)"), UserDefaults(suiteName: appGroupId)?.string(forKey: "sunset_\(today)"))
@@ -52,7 +57,6 @@ struct WidgetData {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                 let dataArray = json?["data"] as? [[String: Any]] ?? []
 
-                // Find today's entry
                 let todayEntry = dataArray.first { entry in
                     if let date = entry["date"] as? [String: Any],
                        let greg = date["gregorian"] as? [String: Any],
@@ -70,7 +74,6 @@ struct WidgetData {
                 let prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
                 var prayers: [PrayerTime] = []
 
-                // Calculate which one is next
                 let now = Date()
                 var nextIndex = -1
 
@@ -78,7 +81,7 @@ struct WidgetData {
                     let timeStr = timings[name] ?? "--:--"
                     let parts = timeStr.split(separator: ":")
                     if parts.count >= 2, let hour = Int(parts[0]), let min = Int(parts[1]) {
-                        var components = Calendar.current.dateComponents([.year, .month, .day], from: now)
+                        var components = Calendar.current.dateComponentsL [.year, .month, .day], from: now)
                         components.hour = hour
                         components.minute = min
                         components.second = 0
@@ -89,7 +92,6 @@ struct WidgetData {
                     }
                 }
 
-                // If all prayers passed, next is tomorrow's Fajr (simplified for widget)
                 if nextIndex == -1 { nextIndex = 0 }
 
                 for (index, name) in prayerNames.enumerated() {
@@ -99,7 +101,6 @@ struct WidgetData {
                 let sunrise = timings["Sunrise"] ?? "--:--"
                 let sunset = timings["Sunset"] ?? "--:--"
 
-                // Cache today's data
                 if let encoded = try? JSONEncoder().encode(prayers) {
                     UserDefaults(suiteName: appGroupId)?.set(encoded, forKey: "cached_prayers_\(today)")
                     UserDefaults(suiteName: appGroupId)?.set(sunrise, forKey: "sunrise_\(today)")
@@ -109,6 +110,37 @@ struct WidgetData {
                 completion(prayers, sunrise, sunset)
             } catch {
                 completion(nil, nil, nil)
+            }
+        }.resume()
+    }
+
+    static func fetchRandomAyah(completion: @escaping (AyahData?) -> Void) {
+        // Fetch a random ayah from the Al-Quran API
+        let urlString = "https://api.alquran.cloud/v1/ayah/random/editions/quran-uthmani"
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else {
+                completion(nil)
+                return
+            }
+
+            do {
+                let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                if let dataObj = json?["data"] as? [String: Any] {
+                    let text = dataObj["text"] as? String ?? "Error loading Ayah"
+                    let surah = dataObj["surah"] as? [String: Any]
+                    let surahName = surah?["name"] as? String ?? "Unknown"
+                    let number = dataObj["number"] as? Int ?? 0
+                    completion(AyahData(text: text, surah: surahName, ayahNum: number))
+                } else {
+                    completion(nil)
+                }
+            } catch {
+                completion(nil)
             }
         }.resume()
     }

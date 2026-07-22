@@ -1,7 +1,9 @@
 import WidgetKit
 import SwiftUI
 
-struct QuranWidgetEntry: TimelineEntry {
+// ─── Prayer Widgets ───────────────────────────────────────────────────────────
+
+struct QuranPrayerEntry: TimelineEntry {
     let date: Date
     let prayers: [PrayerTime]
     let sunrise: String
@@ -9,34 +11,32 @@ struct QuranWidgetEntry: TimelineEntry {
     let hijriDate: String
 }
 
-struct QuranWidgetProvider: TimelineProvider {
-    func placeholder(in context: Context) -> QuranWidgetEntry {
-        QuranWidgetEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
+struct QuranPrayerProvider: TimelineProvider {
+    func placeholder(in context: Context) -> QuranPrayerEntry {
+        QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (QuranWidgetEntry) -> Void) {
-        let entry = QuranWidgetEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
+    func getSnapshot(in context: Context, completion: @escaping (QuranPrayerEntry) -> Void) {
+        let entry = QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
         completion(entry)
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<QuranWidgetEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<QuranPrayerEntry>) -> Void) {
         if let coords = WidgetData.getCoordinates() {
             WidgetData.fetchPrayers(lat: coords.lat, lon: coords.lon) { prayers, sunrise, sunset in
                 let hijri = getHijriDate()
-                let entry = QuranWidgetEntry(
+                let entry = QuranPrayerEntry(
                     date: Date(),
                     prayers: prayers ?? [],
                     sunrise: sunrise ?? "--:--",
                     sunset: sunset ?? "--:--",
                     hijriDate: hijri
                 )
-                // Update every 30 minutes
                 let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
-                let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-                completion(timeline)
+                completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
             }
         } else {
-            let entry = QuranWidgetEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
+            let entry = QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
             completion(Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600))))
         }
     }
@@ -48,22 +48,90 @@ struct QuranWidgetProvider: TimelineProvider {
     }
 }
 
-@main
-struct QuranWidget: Widget {
-    let kind: String = "com.abuhashim.khalafquran.quranwidget"
+struct QuranSmallWidget: Widget {
+    let kind: String = "com.abuhashim.khalafquran.quranwidget.small"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: QuranWidgetProvider()) { entry in
+        StaticConfiguration(kind: kind, provider: QuranPrayerProvider()) { entry in
             QuranWidgetView(
                 prayers: entry.prayers,
                 sunrise: entry.sunrise,
                 sunset: entry.sunset,
                 hijriDate: entry.hijriDate,
-                isLarge: true // The system handles size, but we can use entry data
+                isLarge: false
             )
         }
-        .configurationDisplayName("Quran Prayers")
-        .description("View daily prayer times and Hijri date.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .configurationDisplayName("Prayer Times (Small)")
+        .description("Next prayer and Hijri date.")
+        .supportedFamilies([.systemSmall])
+    }
+}
+
+struct QuranLargeWidget: Widget {
+    let kind: String = "com.abuhashim.khalafquran.quranwidget.large"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: QuranPrayerProvider()) { entry in
+            QuranWidgetView(
+                prayers: entry.prayers,
+                sunrise: entry.sunrise,
+                sunset: entry.sunset,
+                hijriDate: entry.hijriDate,
+                isLarge: true
+            )
+        }
+        .configurationDisplayName("Prayer Times (Large)")
+        .description("Full daily prayer schedule.")
+        .supportedFamilies([.systemMedium, .systemLarge])
+    }
+}
+
+// ─── Ayah Widget ──────────────────────────────────────────────────────────────
+
+struct AyahWidgetEntry: TimelineEntry {
+    let date: Date
+    let ayah: AyahData?
+}
+
+struct AyahWidgetProvider: TimelineProvider {
+    func placeholder(in context: Context) -> AyahWidgetEntry {
+        AyahWidgetEntry(date: Date(), ayah: nil)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (AyahWidgetEntry) -> Void) {
+        completion(AyahWidgetEntry(date: Date(), ayah: nil))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<AyahWidgetEntry>) -> Void) {
+        WidgetData.fetchRandomAyah { ayah in
+            let entry = AyahWidgetEntry(date: Date(), ayah: ayah)
+            // Refresh every 4 hours
+            let nextUpdate = Calendar.current.date(byAdding: .hour, value: 4, to: Date())!
+            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+        }
+    }
+}
+
+struct QuranAyahWidget: Widget {
+    let kind: String = "com.abuhashim.khalafquran.ayahwidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: AyahWidgetProvider()) { entry in
+            QuranAyahWidgetView(ayah: entry.ayah)
+        }
+        .configurationDisplayName("Ayah of the Day")
+        .description("A random Ayah from the Holy Quran.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+// ─── Main Bundle ──────────────────────────────────────────────────────────────
+
+@main
+struct QuranWidgetBundle: WidgetBundle {
+    var body: some Widget {
+        QuranSmallWidget()
+        QuranLargeWidget()
+        QuranAyahWidget()
     }
 }
