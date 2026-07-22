@@ -10675,7 +10675,6 @@ class _AudioSheetState extends State<_AudioSheet> {
         ),
         onPressed: () {
           _svc.downloadAndPlay(_surahNum, seekTo: hasResume ? savedPos : null);
-          widget.onPageJump?.call(kSurahs[_surahNum - 1]['page'] as int);
         },
       ),
     );
