@@ -50,7 +50,7 @@ struct QuranWidgetProvider: TimelineProvider {
 
 @main
 struct QuranWidget: Widget {
-    let kind: String = "com.abuhashim.khalaf_quran.quranwidget"
+    let kind: String = "com.abuhashim.khalafquran.quranwidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: QuranWidgetProvider()) { entry in

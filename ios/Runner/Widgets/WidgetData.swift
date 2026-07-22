@@ -8,7 +8,7 @@ struct PrayerTime {
 }
 
 struct WidgetData {
-    static let appGroupId = "com.abuhashim.khalaf_quran"
+    static let appGroupId = "com.abuhashim.khalafquran"
 
     static func getCoordinates() -> (lat: String, lon: String)? {
         let defaults = UserDefaults(suiteName: appGroupId)

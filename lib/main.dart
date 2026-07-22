@@ -1639,7 +1639,7 @@ const iosDecelerate = Cubic(0.0, 0.0, 0.2, 1.0);
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid || Platform.isIOS) {
-    await HomeWidget.setAppGroupId('com.abuhashim.khalaf_quran');
+    await HomeWidget.setAppGroupId('com.abuhashim.khalafquran');
   }
   await AudioNotificationService.instance.initialize();
   await QuranAudioManager.instance.initialize();

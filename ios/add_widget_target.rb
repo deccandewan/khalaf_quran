@@ -25,7 +25,11 @@ begin
     # Set build settings for both configurations
     ['Debug', 'Release'].each do |config_name|
       config = target.build_configuration_list[config_name]
-      config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.abuhashim.khalaf_quran.QuranWidget'
+      # Match the parent app's bundle identifier dynamically
+      runner_target = project.targets.find { |t| t.name == 'Runner' }
+      parent_bundle_id = runner_target.build_configurations.first.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] || 'com.abuhashim.khalafquran'
+
+      config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "#{parent_bundle_id}.QuranWidget"
       config.build_settings['PRODUCT_NAME'] = target_name
       config.build_settings['INFOPLIST_FILE'] = 'Runner/Widgets/Info.plist'
       config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Widgets/QuranWidget.entitlements'
