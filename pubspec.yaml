@@ -24,7 +24,7 @@ dependencies:
   quick_actions: ^1.0.7
   vibration: ^2.0.0
   geolocator: ^13.0.2
-  audio_service: ^0.18.12
+  audio_service: ^0.18.19
 
 dev_dependencies:
   flutter_test:

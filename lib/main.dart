@@ -1642,7 +1642,7 @@ void main() async {
     await HomeWidget.setAppGroupId('com.abuhashim.khalaf_quran');
   }
   await AudioNotificationService.instance.initialize();
-  await AudioService.instance.initialize();
+  await QuranAudioManager.instance.initialize();
   await AppState.instance.loadLanguage();
   await AppState.instance.loadDarkMode();
 
@@ -2726,7 +2726,7 @@ class AudioNotificationService {
 
   // Static callback — safe to call singleton methods
   static void _onNotificationResponse(NotificationResponse response) {
-    final svc = AudioService.instance;
+    final svc = QuranAudioManager.instance;
     switch (response.actionId) {
       case 'toggle_play':
         svc.toggle();
@@ -2751,7 +2751,7 @@ class AudioNotificationService {
     if (now.difference(_lastNotificationSync).inMilliseconds < 1000) return;
     _lastNotificationSync = now;
 
-    final currentSurah = AudioService.instance.currentSurah;
+    final currentSurah = QuranAudioManager.instance.currentSurah;
     if (currentSurah == null) {
       await hide();
       return;
@@ -2763,9 +2763,9 @@ class AudioNotificationService {
         ? surah['english'] as String
         : surah['arabic'] as String;
     final subtitle = surah['arabic'] as String;
-    final isPlaying = AudioService.instance.player.playing;
-    final position = AudioService.instance.position;
-    final duration = AudioService.instance.duration;
+    final isPlaying = QuranAudioManager.instance.player.playing;
+    final position = QuranAudioManager.instance.position;
+    final duration = QuranAudioManager.instance.duration;
 
     final progressLabel = duration == null
         ? _formatDuration(position)
@@ -2977,6 +2977,7 @@ class AudioNotificationService {
 enum PlaybackMode { off, autoPlay, repeatOne }
 
 class QuranAudioHandler extends BaseAudioHandler {
+  final AudioPlayer _player = AudioPlayer();
 
   QuranAudioHandler() {
     // Sync player state to audio_service playback state
@@ -2985,10 +2986,8 @@ class QuranAudioHandler extends BaseAudioHandler {
     });
 
     _player.positionStream.listen((pos) {
-      playbackState.add(playbackState.value.copyWith(
-        processingState: ProcessingState.ready,
-        position: pos,
-      ));
+      // Position is handled by the system via the player's position stream
+      // and the duration provided in the MediaItem.
     });
   }
 
@@ -3006,17 +3005,17 @@ class QuranAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToNext() async {
-    final current = AudioService.instance.currentSurah;
+    final current = QuranAudioManager.instance.currentSurah;
     if (current != null && current < 114) {
-      await AudioService.instance.skipTo(current + 1);
+      await QuranAudioManager.instance.skipTo(current + 1);
     }
   }
 
   @override
   Future<void> skipToPrevious() async {
-    final current = AudioService.instance.currentSurah;
+    final current = QuranAudioManager.instance.currentSurah;
     if (current != null && current > 1) {
-      await AudioService.instance.skipTo(current - 1);
+      await QuranAudioManager.instance.skipTo(current - 1);
     }
   }
 
@@ -3042,21 +3041,21 @@ class QuranAudioHandler extends BaseAudioHandler {
       playing: _player.playing,
       processingState: _player.processingState
           .index == 0 // ready
-              ? ProcessingState.ready
+              ? AudioProcessingState.ready
           : _player.processingState.index == 1 // buffering
-              ? ProcessingState.buffering
+              ? AudioProcessingState.buffering
               : _player.processingState.index == 2 // completed
-                  ? ProcessingState.completed
-                  : ProcessingState.idle,
+                  ? AudioProcessingState.completed
+                  : AudioProcessingState.idle,
     ));
   }
 
   AudioPlayer get player => _player;
 }
 
-class AudioService with WidgetsBindingObserver {
+class QuranAudioManager with WidgetsBindingObserver {
 
-  AudioService._() {
+  QuranAudioManager._() {
     // The handler is initialized asynchronously in initialize().
     // We use a listener on the handler's player state.
     // Since this is a singleton, we can't easily await initialize() here.
@@ -3121,18 +3120,16 @@ class AudioService with WidgetsBindingObserver {
     _notify();
   }
 
-  static final AudioService instance = AudioService._();
+  static final QuranAudioManager instance = QuranAudioManager._();
 
   Future<void> initialize() async {
     final handler = await AudioService.init(
       builder: () => QuranAudioHandler(),
-      androidAudioConfigs: const AndroidAudioConfiguration(
+      config: const AudioServiceConfig(
         androidNotificationChannelId: 'khalaf_audio_channel',
         androidNotificationChannelName: 'Khalaf Quran Audio',
-        androidNotificationDefaultChannelId: 'khalaf_audio_channel',
         androidStopForegroundOnPause: true,
       ),
-      iosAudioConfigs: const IOSAudioConfiguration([], null, null),
     );
     _handler = handler;
 
@@ -3150,11 +3147,11 @@ class AudioService with WidgetsBindingObserver {
     });
 
     // Pre-scan downloaded files
-    await _initDownloadCache();
+    await _preloadDownloadedCache();
   }
 
   AudioHandler? _handler;
-  AudioHandler get handler => _handler!;
+  QuranAudioHandler get handler => _handler as QuranAudioHandler;
 
   void init() {
     WidgetsBinding.instance.addObserver(this);
@@ -3525,7 +3522,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   DateTime _settingsHeatmapMonth =
       DateTime(DateTime.now().year, DateTime.now().month);
 
-  final _audioSvc = AudioService.instance;
+  final _audioSvc = QuranAudioManager.instance;
   bool _downloading = false;
   int _dlCurrent = 0;
   int _dlTotal = 114;
@@ -6761,7 +6758,7 @@ class _SurahListScreenState extends State<SurahListScreen>
 
   void _showAudio() {
     _hapticLight();
-    final currentSurah = AudioService.instance.currentSurah;
+    final currentSurah = QuranAudioManager.instance.currentSurah;
 
     final currentPage = currentSurah == null
         ? (_lastRead?['page'] as int? ?? 1)
@@ -7583,20 +7580,20 @@ class _SurahListItemState extends State<_SurahListItem> {
     super.initState();
     _checkDownloadStatus();
     // Optimize: Only listen to download progress for this specific surah
-    AudioService.instance.addListener(_onAudioServiceUpdate);
+    QuranAudioManager.instance.addListener(_onAudioServiceUpdate);
   }
 
   @override
   void dispose() {
-    AudioService.instance.removeListener(_onAudioServiceUpdate);
+    QuranAudioManager.instance.removeListener(_onAudioServiceUpdate);
     super.dispose();
   }
 
   /// Optimized: Only rebuild if THIS surah's download status or progress changed
   void _onAudioServiceUpdate() {
     final surahNum = widget.surah['number'] as int;
-    final isDownloaded = AudioService.instance.isKnownDownloaded(surahNum);
-    final progress = AudioService.instance.downloadProgress[surahNum];
+    final isDownloaded = QuranAudioManager.instance.isKnownDownloaded(surahNum);
+    final progress = QuranAudioManager.instance.downloadProgress[surahNum];
 
     // Only rebuild if download state or in-progress download changed
     if ((isDownloaded != _wasDownloaded || progress != _lastProgress) && mounted) {
@@ -7607,7 +7604,7 @@ class _SurahListItemState extends State<_SurahListItem> {
   }
 
   Future<void> _checkDownloadStatus() async {
-    final downloaded = await AudioService.instance
+    final downloaded = await QuranAudioManager.instance
         .isDownloaded(widget.surah['number'] as int);
     if (!mounted) return;
     setState(() => _wasDownloaded = downloaded);
@@ -9066,7 +9063,7 @@ class _PdfScreenState extends State<PdfScreen> {
     _viewerController.addListener(_constrainHorizontalMovement);
     AppState.instance.addListener(_rebuild);
     _drawCtrl.addListener(_rebuild);
-    AudioService.instance.addListener(_onAudioUpdate);
+    QuranAudioManager.instance.addListener(_onAudioUpdate);
     _loadDpi();
     _drawCtrl.ensureLoaded();
 
@@ -9132,7 +9129,7 @@ class _PdfScreenState extends State<PdfScreen> {
     _viewerController.removeListener(_constrainHorizontalMovement);
     _drawCtrl.removeListener(_rebuild);
     AppState.instance.removeListener(_rebuild);
-    AudioService.instance.removeListener(_onAudioUpdate);
+    QuranAudioManager.instance.removeListener(_onAudioUpdate);
     _barHideTimer?.cancel();
     _settleTimer?.cancel();
 
@@ -9963,7 +9960,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                     IconButton(
                                       icon: Icon(Icons.headphones_rounded,
                                           size: 22,
-                                          color: AudioService.instance.hasActiveAudio
+                                          color: QuranAudioManager.instance.hasActiveAudio
                                               ? _kGreenLight
                                               : Colors.white70),
                                       onPressed: _showAudio,
@@ -10084,7 +10081,7 @@ class _BottomAudioBar extends StatefulWidget {
 }
 
 class _BottomAudioBarState extends State<_BottomAudioBar> {
-  final _svc = AudioService.instance;
+  final _svc = QuranAudioManager.instance;
   bool _lastHasActiveAudio = false;
 
   @override
@@ -10140,7 +10137,7 @@ class _AudioMiniBar extends StatefulWidget {
 }
 
 class _AudioMiniBarState extends State<_AudioMiniBar> {
-  final _svc = AudioService.instance;
+  final _svc = QuranAudioManager.instance;
 
   // Cached values — only call setState when something visible actually changes.
   int? _lastSurahNum;
@@ -10409,7 +10406,7 @@ class _AudioSheetState extends State<_AudioSheet> {
   late FixedExtentScrollController _wheel;
   late int _selectedIndex;
   late Future<bool> _downloadedFuture;
-  final _svc = AudioService.instance;
+  final _svc = QuranAudioManager.instance;
   bool _showSleepPicker = false;
   Timer? _uiTimer;
   Duration? _savedPosition; // persisted position for selected surah
@@ -11103,12 +11100,12 @@ class _SurahGalleryModalState extends State<_SurahGalleryModal> {
   void initState() {
     super.initState();
     _loadDownloadStatuses();
-    AudioService.instance.addListener(_onAudioStateChanged);
+    QuranAudioManager.instance.addListener(_onAudioStateChanged);
   }
 
   @override
   void dispose() {
-    AudioService.instance.removeListener(_onAudioStateChanged);
+    QuranAudioManager.instance.removeListener(_onAudioStateChanged);
     for (final n in _notifiers.values) {
       n.dispose();
     }
@@ -11118,7 +11115,7 @@ class _SurahGalleryModalState extends State<_SurahGalleryModal> {
   // Parallel filesystem check — one setState when all 114 are done
   Future<void> _loadDownloadStatuses() async {
     final results = await Future.wait(
-      List.generate(114, (i) => AudioService.instance.isDownloaded(i + 1)),
+      List.generate(114, (i) => QuranAudioManager.instance.isDownloaded(i + 1)),
     );
     if (!mounted) return;
     setState(() {
@@ -11130,7 +11127,7 @@ class _SurahGalleryModalState extends State<_SurahGalleryModal> {
 
   // Fires on every AudioService notify — only touches the one active notifier
   void _onAudioStateChanged() {
-    final svc = AudioService.instance;
+    final svc = QuranAudioManager.instance;
     for (final entry in svc.downloadProgress.entries) {
       _notifierFor(entry.key).value = _TileState(
         isDownloading: true,
@@ -11168,8 +11165,8 @@ class _SurahGalleryModalState extends State<_SurahGalleryModal> {
       progress: 0.0,
     );
     try {
-      await AudioService.instance.downloadOnly(surahNum);
-      final ok = AudioService.instance.isKnownDownloaded(surahNum);
+      await QuranAudioManager.instance.downloadOnly(surahNum);
+      final ok = QuranAudioManager.instance.isKnownDownloaded(surahNum);
       if (mounted) setState(() => _downloaded[surahNum - 1] = ok);
       _notifierFor(surahNum).value = _TileState(
         isDownloading: false,
@@ -11855,7 +11852,7 @@ class _SurahTile extends StatelessWidget {
                   onTap: isDownloading
                       ? () {
                           _hapticLight();
-                          AudioService.instance.cancelSingleDownload();
+                          QuranAudioManager.instance.cancelSingleDownload();
                         }
                       : isDownloaded
                           ? null
