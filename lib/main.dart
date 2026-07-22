@@ -247,6 +247,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
@@ -1641,6 +1642,7 @@ void main() async {
     await HomeWidget.setAppGroupId('com.abuhashim.khalaf_quran');
   }
   await AudioNotificationService.instance.initialize();
+  await AudioService.instance.initialize();
   await AppState.instance.loadLanguage();
   await AppState.instance.loadDarkMode();
 
@@ -2974,28 +2976,97 @@ class AudioNotificationService {
 
 enum PlaybackMode { off, autoPlay, repeatOne }
 
-class AudioService with WidgetsBindingObserver {
-  AudioService._() {
-    _player.playerStateStream.listen((state) {
-      _notify();
-      AudioNotificationService.instance.syncPlayback();
-      // Save position on pause (not on completion)
-      if (!state.playing &&
-          state.processingState != ProcessingState.completed) {
-        _persistPosition();
-      }
-      // Auto-advance / repeat logic
-      if (state.processingState == ProcessingState.completed) {
-        PrefsService.clearAudioPosition();
-        _onTrackCompleted();
-      }
+class QuranAudioHandler extends BaseAudioHandler {
+
+  QuranAudioHandler() {
+    // Sync player state to audio_service playback state
+    _player.playbackEventStream.listen((event) {
+      _updatePlaybackState();
     });
+
+    _player.positionStream.listen((pos) {
+      playbackState.add(playbackState.value.copyWith(
+        processingState: ProcessingState.ready,
+        position: pos,
+      ));
+    });
+  }
+
+  @override
+  Future<void> play() => _player.play();
+
+  @override
+  Future<void> pause() => _player.pause();
+
+  @override
+  Future<void> stop() => _player.stop();
+
+  @override
+  Future<void> seek(Duration position) => _player.seek(position);
+
+  @override
+  Future<void> skipToNext() async {
+    final current = AudioService.instance.currentSurah;
+    if (current != null && current < 114) {
+      await AudioService.instance.skipTo(current + 1);
+    }
+  }
+
+  @override
+  Future<void> skipToPrevious() async {
+    final current = AudioService.instance.currentSurah;
+    if (current != null && current > 1) {
+      await AudioService.instance.skipTo(current - 1);
+    }
+  }
+
+  void updateMetadata(int surahNum) {
+    final surah = kSurahs[surahNum - 1];
+    final lang = AppState.instance.language;
+    final title = lang == AppLanguage.english
+        ? surah['english'] as String
+        : surah['arabic'] as String;
+    final artist = "Abd Al-Rashid Sufi · Khalaf an Hamzah";
+
+    mediaItem.add(MediaItem(
+      id: surahNum.toString(),
+      album: "Quran",
+      title: title,
+      artist: artist,
+      duration: _player.duration,
+    ));
+  }
+
+  void _updatePlaybackState() {
+    playbackState.add(playbackState.value.copyWith(
+      playing: _player.playing,
+      processingState: _player.processingState
+          .index == 0 // ready
+              ? ProcessingState.ready
+          : _player.processingState.index == 1 // buffering
+              ? ProcessingState.buffering
+              : _player.processingState.index == 2 // completed
+                  ? ProcessingState.completed
+                  : ProcessingState.error,
+    ));
+  }
+
+  AudioPlayer get player => handler.player;
+}
+
+class AudioService with WidgetsBindingObserver {
+
+  AudioService._() {
+    // The handler is initialized asynchronously in initialize().
+    // We use a listener on the handler's player state.
+    // Since this is a singleton, we can't easily await initialize() here.
+    // We'll set up the listener once the handler is available.
   }
 
   void _persistPosition() {
     final s = currentSurah;
     if (s == null) return;
-    PrefsService.saveAudioPosition(s, _player.position);
+    PrefsService.saveAudioPosition(s, player.position);
   }
 
   // ── Playback mode ─────────────────────────────────────────────────────────
@@ -3010,7 +3081,7 @@ class AudioService with WidgetsBindingObserver {
   void _onTrackCompleted() {
     switch (playbackMode) {
       case PlaybackMode.repeatOne:
-        _player.seek(Duration.zero).then((_) => _player.play());
+        player.seek(Duration.zero).then((_) => player.play());
       case PlaybackMode.autoPlay:
         if (currentSurah != null && currentSurah! < 114) {
           final next = currentSurah! + 1;
@@ -3040,7 +3111,7 @@ class AudioService with WidgetsBindingObserver {
     if (minutes > 0) {
       _sleepTimerEnd = DateTime.now().add(Duration(minutes: minutes));
       _sleepTimer = Timer(Duration(minutes: minutes), () {
-        _player.pause();
+        handler.pause();
         sleepTimerMinutes = 0;
         _sleepTimerEnd = null;
         _sleepTimer = null;
@@ -3050,7 +3121,40 @@ class AudioService with WidgetsBindingObserver {
     _notify();
   }
 
-  static final AudioService instance = AudioService._()..init();
+  static final AudioService instance = AudioService._();
+
+  Future<void> initialize() async {
+    final handler = await AudioService.init(
+      builder: () => QuranAudioHandler(),
+      androidAudioConfigs: const AndroidAudioConfiguration(
+        androidNotificationChannel la_id: 'khalaf_audio_channel',
+        androidNotificationChannelName: 'Khalaf Quran Audio',
+        androidNotificationDefaultChannelId: 'khalaf_audio_channel',
+        androidStopForegroundOnPause: true,
+      ),
+      iosAudioConfigs: const IOSAudioConfiguration([], null, null),
+    );
+    _handler = handler;
+
+    // Setup player state listener
+    handler.player.playerStateStream.listen((state) {
+      _notify();
+      AudioNotificationService.instance.syncPlayback();
+      if (!state.playing && state.processingState != ProcessingState.completed) {
+        _persistPosition();
+      }
+      if (state.processingState == ProcessingState.completed) {
+        PrefsService.clearAudioPosition();
+        _onTrackCompleted();
+      }
+    });
+
+    // Pre-scan downloaded files
+    await _initDownloadCache();
+  }
+
+  AudioHandler? _handler;
+  AudioHandler get handler => _handler!;
 
   void init() {
     WidgetsBinding.instance.addObserver(this);
@@ -3089,7 +3193,6 @@ class AudioService with WidgetsBindingObserver {
 
   static final Dio _dio = Dio();
 
-  final AudioPlayer _player = AudioPlayer();
   int? currentSurah;
 
   // ── Cached settings (invalidated when user changes them) ─────────────────
@@ -3126,9 +3229,9 @@ class AudioService with WidgetsBindingObserver {
 
   List<int> get bulkFailedSurahs => List<int>.from(_bulkFailedSurahs);
 
-  AudioPlayer get player => _player;
-  Duration get position => _player.position;
-  Duration? get duration => _player.duration;
+  AudioPlayer get player => handler.player;
+  Duration get position => player.position;
+  Duration? get duration => player.duration;
 
   Future<String> _audioUrl(int n) async {
     _cachedBaseUrl ??= await PrefsService.getAudioBaseUrl();
@@ -3209,11 +3312,12 @@ class AudioService with WidgetsBindingObserver {
 
     if (_knownDownloaded.contains(surahNum)) {
       currentSurah = surahNum;
-      await _player.setFilePath(path);
+      handler.updateMetadata(surahNum);
+      await player.setFilePath(path);
       if (seekTo != null && seekTo.inSeconds > 0) {
-        await _player.seek(seekTo);
+        await player.seek(seekTo);
       }
-      await _player.play();
+      await player.play();
       // Clear saved position — we've resumed, so it's consumed
       PrefsService.clearAudioPosition();
       _notify();
@@ -3352,25 +3456,25 @@ class AudioService with WidgetsBindingObserver {
   void cancelSleepTimer() => setSleepTimer(0);
 
   Future<void> toggle() async {
-    if (_player.playing) {
-      await _player.pause();
+    if (player.playing) {
+      await handler.pause();
     } else {
-      await _player.play();
+      await handler.play();
     }
   }
 
-  Future<void> seek(Duration pos) => _player.seek(pos);
+  Future<void> seek(Duration pos) => handler.seek(pos);
 
   Future<void> seekBackward(Duration amount) async {
     final target = position - amount;
-    await _player.seek(target < Duration.zero ? Duration.zero : target);
+    await handler.seek(target < Duration.zero ? Duration.zero : target);
     AudioNotificationService.instance.syncPlayback();
   }
 
   Future<void> seekForward(Duration amount) async {
-    final dur = _player.duration;
+    final dur = player.duration;
     final target = position + amount;
-    await _player.seek(dur != null && target > dur ? dur : target);
+    await handler.seek(dur != null && target > dur ? dur : target);
     AudioNotificationService.instance.syncPlayback();
   }
 
