@@ -57,6 +57,21 @@ begin
     if runner_target
       runner_target.add_dependency(target)
       puts "Added #{target_name} as dependency to Runner target."
+
+      # Embed the widget extension in the main app bundle
+      embed_phase = runner_target.build_phases.find { |p| p.is_a?(Xcodeproj::PBXCopyFilesBuildPhase) && p.value == 'Embed App Extensions' }
+      if embed_phase.nil?
+        embed_phase = runner_target.new_copy_files_build_phase
+        embed_phase.value = 'Embed App Extensions'
+      end
+
+      product = project.products.find { |p| p.name == target_name }
+      if product
+        embed_phase.add_file_references([product])
+        puts "Embedded #{target_name} product into Runner app bundle."
+      else
+        puts "Warning: Could not find product for #{target_name}, embedding failed."
+      end
     else
       puts "Warning: Runner target not found, could not add dependency."
     end
