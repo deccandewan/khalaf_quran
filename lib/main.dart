@@ -2844,6 +2844,10 @@ class AudioNotificationService {
     if (!_initialized || !_isMobilePlatform) return false;
 
     try {
+      // Add a small delay to ensure the app is fully focused and ready
+      // iOS sometimes suppresses notifications fired during the first few seconds of launch.
+      await Future.delayed(const Duration(seconds: 2));
+
       // For test notification, use a dedicated high-importance channel
       await _plugin.show(
         999, // Unique ID for test notification
@@ -2853,7 +2857,7 @@ class AudioNotificationService {
           android: AndroidNotificationDetails(
             'test_channel_high',
             'Test Notifications',
-            channelDescription: 'High priority test notifications',
+            channelDescription own: 'High priority test notifications',
             importance: Importance.high,
             priority: Priority.high,
             playSound: true,
