@@ -46,24 +46,14 @@ begin
     widget_files = Dir.glob('Runner/Widgets/*.swift')
     puts "Found widget files: #{widget_files.join(', ')}"
 
-    # Get the sources build phase (the phase that actually compiles the code)
-    sources_phase = target.build_phases.find { |p| p.is_a?(Xcodeproj::Project::Object::PBXSourcesBuildPhase) }
-    if sources_phase.nil?
-      puts "Error: Could not find sources build phase for target #{target_name}"
-      exit 1
-    end
-
     widget_files.each do |file|
       file_name = File.basename(file)
       file_ref = widget_group.files.find { |f| f.path == file_name }
       file_ref ||= widget_group.new_file(file_name)
 
-      # 1. Add to the target's file references
+      # Use the high-level API to add the file to the target.
+      # This automatically handles adding it to the 'Compile Sources' phase.
       target.add_file_references([file_ref])
-
-      # 2. Explicitly add to the Compile Sources phase
-      # This ensures the Swift compiler actually builds these files into the binary
-      sources_phase.add_build_file(file_ref)
     end
 
     # Add target dependency to the main Runner target
