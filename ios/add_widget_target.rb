@@ -29,7 +29,7 @@ begin
       config.build_settings['PRODUCT_NAME'] = target_name
       config.build_settings['INFOPLIST_FILE'] = 'Runner/Widgets/Info.plist'
       config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Widgets/QuranWidget.entitlements'
-      config.build_settings['SWIFT_VERSION'] = '5.0'
+      config.build_settings['SWIFT_VERSION'] = '5.9'
       config.build_settings['TARGETED_DEVICE_FAMILY'] = '1,2'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['SKIP_INSTALL'] = 'YES'
@@ -59,18 +59,27 @@ begin
       puts "Added #{target_name} as dependency to Runner target."
 
       # Embed the widget extension in the main app bundle
-      embed_phase = runner_target.build_phases.find { |p| p.is_a?(Xcodeproj::PBXCopyFilesBuildPhase) && p.value == 'Embed App Extensions' }
-      if embed_phase.nil?
-        embed_phase = runner_target.new_copy_files_build_phase
-        embed_phase.value = 'Embed App Extensions'
+      # In Xcode, Embedding is a Copy Files build phase targeting the :frameworks folder.
+      embed_phase = runner_target.copy_files_build_phases.find do |p|
+        p.symbol_dst_subfolder_spec == :frameworks && p.name =~ /Embed/
       end
 
-      product = project.products.find { |p| p.name == target_name }
-      if product
-        embed_phase.add_file_references([product])
-        puts "Embedded #{target_name} product into Runner app bundle."
+      if embed_phase.nil?
+        embed_phase = runner_target.new_copy_files_build_phase('Embed App Extensions')
+        embed_phase.symbol_dst_subfolder_spec = :frameworks
+      end
+
+      product_ref = target.product_reference
+      if product_ref
+        # Ensure we don't add it multiple times
+        unless embed_phase.files.any? { |f| f.file_ref == product_ref }
+          build_file = embed_phase.add_file_reference(product_ref)
+          # CodeSignOnCopy is MANDATORY for app extensions to run
+          build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy'] }
+          puts "Embedded #{target_name} product into Runner app bundle with CodeSignOnCopy."
+        end
       else
-        puts "Warning: Could not find product for #{target_name}, embedding failed."
+        puts "Warning: Could not find product reference for #{target_name}, embedding failed."
       end
     else
       puts "Warning: Runner target not found, could not add dependency."
