@@ -81,7 +81,7 @@ struct WidgetData {
                     let timeStr = timings[name] ?? "--:--"
                     let parts = timeStr.split(separator: ":")
                     if parts.count >= 2, let hour = Int(parts[0]), let min = Int(parts[1]) {
-                        var components = Calendar.current.dateComponentsL [.year, .month, .day], from: now)
+                        var components = Calendar.current.dateComponents([.year, .month, .day], from: now)
                         components.hour = hour
                         components.minute = min
                         components.second = 0
