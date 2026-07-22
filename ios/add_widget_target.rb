@@ -47,7 +47,11 @@ begin
     puts "Found widget files: #{widget_files.join(', ')}"
 
     # Get the sources build phase (the phase that actually compiles the code)
-    sources_phase = target.sources_build_phase
+    sources_phase = target.build_phases.find { |p| p.is_a?(Xcodeproj::Project::Object::PBXSourcesBuildPhase) }
+    if sources_phase.nil?
+      puts "Error: Could not find sources build phase for target #{target_name}"
+      exit 1
+    end
 
     widget_files.each do |file|
       file_name = File.basename(file)
