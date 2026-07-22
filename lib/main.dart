@@ -3047,11 +3047,11 @@ class QuranAudioHandler extends BaseAudioHandler {
               ? ProcessingState.buffering
               : _player.processingState.index == 2 // completed
                   ? ProcessingState.completed
-                  : ProcessingState.error,
+                  : ProcessingState.idle,
     ));
   }
 
-  AudioPlayer get player => handler.player;
+  AudioPlayer get player => _player;
 }
 
 class AudioService with WidgetsBindingObserver {
