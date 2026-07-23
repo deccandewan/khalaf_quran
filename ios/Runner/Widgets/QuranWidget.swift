@@ -262,12 +262,12 @@ struct AyahWidgetProvider: AppIntentTimelineProvider {
 
     func placeholder(in context: Context) -> AyahWidgetEntry {
         let ayahs = loadLocalAyahs()
-        AyahWidgetEntry(date: Date(), ayah: ayahs.first)
+        return AyahWidgetEntry(date: Date(), ayah: ayahs.first)
     }
 
     func snapshot(for configuration: AyahLanguageIntent, in context: Context) async -> AyahWidgetEntry {
         let ayahs = loadLocalAyahs()
-        AyahWidgetEntry(date: Date(), ayah: ayahs.first)
+        return AyahWidgetEntry(date: Date(), ayah: ayahs.first)
     }
 
     func timeline(for configuration: AyahLanguageIntent, in context: Context) async -> Timeline<AyahWidgetEntry> {
