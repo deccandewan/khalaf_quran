@@ -163,8 +163,9 @@ struct LargeWidgetBody: View {
                         )
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 18)
+            .padding(.top, 12)
+            .padding(.bottom, 10)
             .frame(maxWidth: .infinity)
 
             // Divider
@@ -216,8 +217,8 @@ struct LargeWidgetBody: View {
                         .foregroundColor(.wMonth)
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 9)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
         }
     }
