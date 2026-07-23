@@ -2857,7 +2857,7 @@ class AudioNotificationService {
           android: AndroidNotificationDetails(
             'test_channel_high',
             'Test Notifications',
-            channelDescription own: 'High priority test notifications',
+            channelDescription: 'High priority test notifications',
             importance: Importance.high,
             priority: Priority.high,
             playSound: true,
