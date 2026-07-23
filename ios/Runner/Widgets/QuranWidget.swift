@@ -1,6 +1,6 @@
 import WidgetKit
 import SwiftUI
-
+import AppIntents
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 private let islamicMonthNames = [
@@ -55,58 +55,52 @@ struct QuranPrayerEntry: TimelineEntry {
     let nextPrayerName: String
 }
 
-struct QuranPrayerProvider: TimelineProvider {
+struct QuranPrayerProvider: AppIntentTimelineProvider {
+    typealias Intent = PrayerLocationIntent
+    typealias Entry = QuranPrayerEntry
+
     func placeholder(in context: Context) -> QuranPrayerEntry {
         QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
                          hijriDay: "15", hijriMonth: "Muharram", hijriYear: "1446 AH",
                          countdown: "2h 30m", nextPrayerName: "Asr")
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (QuranPrayerEntry) -> Void) {
+    func snapshot(for configuration: PrayerLocationIntent, in context: Context) async -> QuranPrayerEntry {
         let h = getHijriComponents()
-        completion(QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
-                                    hijriDay: h.day, hijriMonth: h.month, hijriYear: h.year,
-                                    countdown: "--:--", nextPrayerName: "---"))
+        return QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
+                                hijriDay: h.day, hijriMonth: h.month, hijriYear: h.year,
+                                countdown: "--:--", nextPrayerName: "---")
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<QuranPrayerEntry>) -> Void) {
-        guard let coords = WidgetData.getCoordinates() else {
-            let h = getHijriComponents()
-            let entry = QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
-                                         hijriDay: h.day, hijriMonth: h.month, hijriYear: h.year,
-                                         countdown: "--:--", nextPrayerName: "---")
-            completion(Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600))))
-            return
-        }
-
-        WidgetData.fetchPrayers(lat: coords.lat, lon: coords.lon) { prayers, sunrise, sunset in
-            let h = getHijriComponents()
-            let next = prayers?.first(where: { $0.isNext })
-            let cd = next.map { countdownString(to: $0.time) } ?? "--:--"
-            let entry = QuranPrayerEntry(
-                date: Date(),
-                prayers: prayers ?? [],
-                sunrise: sunrise ?? "--:--",
-                sunset: sunset ?? "--:--",
-                hijriDay: h.day,
-                hijriMonth: h.month,
-                hijriYear: h.year,
-                countdown: cd,
-                nextPrayerName: next?.name ?? "---"
-            )
-            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+    func timeline(for configuration: PrayerLocationIntent, in context: Context) async -> Timeline<QuranPrayerEntry> {
+        await withCheckedContinuation { continuation in
+            WidgetData.fetchPrayers(city: configuration.city, country: configuration.country) { prayers, sunrise, sunset in
+                let h = getHijriComponents()
+                let next = prayers?.first(where: { $0.isNext })
+                let cd = next.map { countdownString(to: $0.time) } ?? "--:--"
+                let entry = QuranPrayerEntry(
+                    date: Date(),
+                    prayers: prayers ?? [],
+                    sunrise: sunrise ?? "--:--",
+                    sunset: sunset ?? "--:--",
+                    hijriDay: h.day,
+                    hijriMonth: h.month,
+                    hijriYear: h.year,
+                    countdown: cd,
+                    nextPrayerName: next?.name ?? "---"
+                )
+                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+                continuation.resume(returning: Timeline(entries: [entry], policy: .after(nextUpdate)))
+            }
         }
     }
 }
-
-// ─── Prayer Widgets ───────────────────────────────────────────────────────────
 
 struct QuranSmallWidget: Widget {
     let kind: String = "com.abuhashim.khalafquran.quranwidget.small"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: QuranPrayerProvider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: PrayerLocationIntent.self, provider: QuranPrayerProvider()) { entry in
             QuranWidgetView(entry: entry, isLarge: false)
         }
         .configurationDisplayName("Prayer Times (Small)")
@@ -119,7 +113,7 @@ struct QuranLargeWidget: Widget {
     let kind: String = "com.abuhashim.khalafquran.quranwidget.large"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: QuranPrayerProvider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: PrayerLocationIntent.self, provider: QuranPrayerProvider()) { entry in
             QuranWidgetView(entry: entry, isLarge: true)
         }
         .configurationDisplayName("Prayer Times (Large)")

@@ -14,34 +14,28 @@ struct AyahData {
 }
 
 struct WidgetData {
-    static let appGroupId = "group.com.abuhashim.khalafquran"
 
-    static func getCoordinates() -> (lat: String, lon: String)? {
-        let defaults = UserDefaults(suiteName: appGroupId)
-        let lat = defaults?.string(forKey: "widget_latitude")
-        let lon = defaults?.string(forKey: "widget_longitude")
-        if let lat = lat, let lon = lon {
-            return (lat, lon)
-        }
-        return nil
-    }
-
-    static func fetchPrayers(lat: String, lon: String, completion: @escaping (([PrayerTime]?, String?, String?) -> Void)) {
+    static func fetchPrayers(city: String, country: String, completion: @escaping (([PrayerTime]?, String?, String?) -> Void)) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let today = dateFormatter.string(from: Date())
+        let cacheKey = "cached_prayers_\(city)_\(country)_\(today)"
 
-        if let cached = UserDefaults(suiteName: appGroupId)?.data(forKey: "cached_prayers_\(today)"),
+        if let cached = UserDefaults.standard.data(forKey: cacheKey),
            let decoded = try? JSONDecoder().decode([PrayerTime].self, from: cached) {
-            completion(decoded, UserDefaults(suiteName: appGroupId)?.string(forKey: "sunrise_\(today)"), UserDefaults(suiteName: appGroupId)?.string(forKey: "sunset_\(today)"))
+            completion(decoded,
+                       UserDefaults.standard.string(forKey: "sunrise_\(city)_\(country)_\(today)"),
+                       UserDefaults.standard.string(forKey: "sunset_\(city)_\(country)_\(today)"))
             return
         }
 
-        let calendar = Calendar.current
-        let month = calendar.component(.month, from: Date())
-        let year = calendar.component(.year, from: Date())
+        guard let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let encodedCountry = country.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            completion(nil, nil, nil)
+            return
+        }
 
-        let urlString = "https://api.aladhan.com/v1/calendar/\(year)/\(month)?latitude=\(lat)&longitude=\(lon)&method=2"
+        let urlString = "https://api.aladhan.com/v1/timingsByCity/\(today)?city=\(encodedCity)&country=\(encodedCountry)&method=2"
         guard let url = URL(string: urlString) else {
             completion(nil, nil, nil)
             return
@@ -55,18 +49,8 @@ struct WidgetData {
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                let dataArray = json?["data"] as? [[String: Any]] ?? []
-
-                let todayEntry = dataArray.first { entry in
-                    if let date = entry["date"] as? [String: Any],
-                       let greg = date["gregorian"] as? [String: Any],
-                       let dateStr = greg["date"] as? String {
-                        return dateStr == today
-                    }
-                    return false
-                }
-
-                guard let entry = todayEntry, let timings = entry["timings"] as? [String: String] else {
+                guard let dataObj = json?["data"] as? [String: Any],
+                      let timings = dataObj["timings"] as? [String: String] else {
                     completion(nil, nil, nil)
                     return
                 }
@@ -79,7 +63,8 @@ struct WidgetData {
 
                 for (index, name) in prayerNames.enumerated() {
                     let timeStr = timings[name] ?? "--:--"
-                    let parts = timeStr.split(separator: ":")
+                    let cleanTime = timeStr.components(separatedBy: " ").first ?? timeStr
+                    let parts = cleanTime.split(separator: ":")
                     if parts.count >= 2, let hour = Int(parts[0]), let min = Int(parts[1]) {
                         var components = Calendar.current.dateComponents([.year, .month, .day], from: now)
                         components.hour = hour
@@ -102,9 +87,9 @@ struct WidgetData {
                 let sunset = timings["Sunset"] ?? "--:--"
 
                 if let encoded = try? JSONEncoder().encode(prayers) {
-                    UserDefaults(suiteName: appGroupId)?.set(encoded, forKey: "cached_prayers_\(today)")
-                    UserDefaults(suiteName: appGroupId)?.set(sunrise, forKey: "sunrise_\(today)")
-                    UserDefaults(suiteName: appGroupId)?.set(sunset, forKey: "sunset_\(today)")
+                    UserDefaults.standard.set(encoded, forKey: cacheKey)
+                    UserDefaults.standard.set(sunrise, forKey: "sunrise_\(city)_\(country)_\(today)")
+                    UserDefaults.standard.set(sunset, forKey: "sunset_\(city)_\(country)_\(today)")
                 }
 
                 completion(prayers, sunrise, sunset)
@@ -115,8 +100,7 @@ struct WidgetData {
     }
 
     static func fetchRandomAyah(completion: @escaping (AyahData?) -> Void) {
-        // Fetch a random ayah from the Al-Quran API
-        let urlString = "https://api.alquran.cloud/v1/ayah/random/editions/quran-uthmani"
+        let urlString = "https://api.alquran.cloud/v1/ayah/random/quran-uthmani"
         guard let url = URL(string: urlString) else {
             completion(nil)
             return
