@@ -235,7 +235,7 @@ struct QuranLargeWidget: Widget {
         }
         .configurationDisplayName("Prayer Times (Large)")
         .description("Full daily prayer schedule.")
-        .supportedFamilies([.systemLarge])
+        .supportedFamilies([.systemMedium])
         .contentMarginsDisabled()
     }
 }

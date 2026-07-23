@@ -179,7 +179,7 @@ struct LargeWidgetBody: View {
                     if entry.prayers.first?.name != prayer.name {
                         Color.wDivider.frame(width: 1)
                     }
-                    PrayerCell(prayer: prayer)
+                    PrayerCell(prayer: prayer, isHighlighted: prayer.name == entry.nextPrayerName)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -229,6 +229,7 @@ struct LargeWidgetBody: View {
 
 struct PrayerCell: View {
     var prayer: PrayerTime
+    var isHighlighted: Bool
 
     private let highlightColor = Color(red: 0.478, green: 0.620, blue: 0.478) // #7A9E7A
     private let dimColor       = Color(red: 0.290, green: 0.420, blue: 0.290) // #4A6B4A
@@ -239,13 +240,13 @@ struct PrayerCell: View {
             Text(prayer.name)
                 .font(.system(size: 12, weight: .medium))
                 .tracking(0.3)
-                .foregroundColor(prayer.isNext ? highlightColor : dimColor)
+                .foregroundColor(isHighlighted ? highlightColor : dimColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .allowsTightening(true)
             Text(prayer.time.components(separatedBy: " ").first ?? prayer.time)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(prayer.isNext ? highlightColor : dimColor)
+                .foregroundColor(isHighlighted ? highlightColor : dimColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .allowsTightening(true)
@@ -256,7 +257,7 @@ struct PrayerCell: View {
         .background(
             VStack(spacing: 0) {
                 Spacer()
-                if prayer.isNext {
+                if isHighlighted {
                     Rectangle()
                         .fill(underlineColor)
                         .frame(height: 2)
