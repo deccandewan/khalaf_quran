@@ -99,35 +99,33 @@ struct WidgetData {
         }.resume()
     }
 
-    static func fetchRandomAyah(completion: @escaping (AyahData?) -> Void) {
-        let urlString = "https://api.alquran.cloud/v1/ayah/random/quran-uthmani"
-        guard let url = URL(string: urlString) else {
+ static func fetchRandomAyah(edition: String, completion: @escaping (AyahData?) -> Void) {
+    let urlString = "https://api.alquran.cloud/v1/ayah/random/\(edition)"
+    guard let url = URL(string: urlString) else {
+        completion(nil)
+        return
+    }
+
+    URLSession.shared.dataTask(with: url) { data, _, error in
+        guard let data = data, error == nil else {
             completion(nil)
             return
         }
 
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            guard let data = data, error == nil else {
-                completion(nil)
-                return
-            }
-
-            do {
-                let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let dataObj = json?["data"] as? [String: Any] {
-                    let text = dataObj["text"] as? String ?? "Error loading Ayah"
-                    let surah = dataObj["surah"] as? [String: Any]
-                    let surahName = surah?["name"] as? String ?? "Unknown"
-                    let number = dataObj["number"] as? Int ?? 0
-                    completion(AyahData(text: text, surah: surahName, ayahNum: number))
-                } else {
-                    completion(nil)
-                }
-            } catch {
+        do {
+            let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            if let dataObj = json?["data"] as? [String: Any] {
+                let text = dataObj["text"] as? String ?? "Error loading Ayah"
+                let surah = dataObj["surah"] as? [String: Any]
+                let surahName = surah?["name"] as? String ?? "Unknown"
+                let number = dataObj["number"] as? Int ?? 0
+                completion(AyahData(text: text, surah: surahName, ayahNum: number))
+            } else {
                 completion(nil)
             }
-        }.resume()
-    }
+        } catch {
+            completion(nil)
+        }
+    }.resume()
 }
-
 extension PrayerTime: Codable {}

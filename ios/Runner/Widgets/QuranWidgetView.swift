@@ -187,6 +187,8 @@ struct LargeWidgetBody: View {
                     Text(entry.sunrise)
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(.wSunTime)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                 }
                 Spacer()
                 Color.wDivider.frame(width: 1, height: 14)
@@ -213,24 +215,42 @@ struct LargeWidgetBody: View {
 struct PrayerCell: View {
     var prayer: PrayerTime
 
+    private let highlightColor = Color(red: 0.478, green: 0.620, blue: 0.478) // #7A9E7A
+    private let dimColor       = Color(red: 0.290, green: 0.420, blue: 0.290) // #4A6B4A
+    private let underlineColor = Color(red: 0.176, green: 0.361, blue: 0.200) // #2D5C33
+
     var body: some View {
         VStack(spacing: 4) {
             Text(prayer.name)
                 .font(.system(size: 10, weight: .medium))
-                .tracking(0.5)
-                .foregroundColor(prayer.isNext ? .wMonth : .wPrayerLbl)
+                .tracking(0.3)
+                .foregroundColor(prayer.isNext ? highlightColor : dimColor)
                 .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .allowsTightening(true)
             Text(prayer.time.components(separatedBy: " ").first ?? prayer.time)
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(prayer.isNext ? .wDay : .wPrayerTime)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(prayer.isNext ? highlightColor : dimColor)
                 .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .allowsTightening(true)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
-        .background(prayer.isNext ? Color.wDivider : Color.clear)
+        .padding(.horizontal, 2)
+        .background(
+            VStack(spacing: 0) {
+                Spacer()
+                if prayer.isNext {
+                    Rectangle()
+                        .fill(underlineColor)
+                        .frame(height: 2)
+                        .cornerRadius(1)
+                }
+            }
+        )
     }
 }
-
 // ─── Ayah Widget ──────────────────────────────────────────────────────────────
 
 struct QuranAyahWidgetView: View {

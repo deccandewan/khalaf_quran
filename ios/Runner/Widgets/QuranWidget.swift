@@ -74,7 +74,7 @@ struct QuranPrayerProvider: AppIntentTimelineProvider {
 
     func timeline(for configuration: PrayerLocationIntent, in context: Context) async -> Timeline<QuranPrayerEntry> {
         await withCheckedContinuation { continuation in
-            WidgetData.fetchPrayers(city: configuration.city, country: configuration.country) { prayers, sunrise, sunset in
+            WidgetData.fetchPrayers(city: configuration.city.name, country: configuration.city.country) { prayers, sunrise, sunset in
                 let h = getHijriComponents()
                 let next = prayers?.first(where: { $0.isNext })
                 let cd = next.map { countdownString(to: $0.time) } ?? "--:--"
@@ -118,7 +118,7 @@ struct QuranLargeWidget: Widget {
         }
         .configurationDisplayName("Prayer Times (Large)")
         .description("Full daily prayer schedule.")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .supportedFamilies([.systemMedium])
     }
 }
 
@@ -129,18 +129,25 @@ struct AyahWidgetEntry: TimelineEntry {
     let ayah: AyahData?
 }
 
-struct AyahWidgetProvider: TimelineProvider {
+struct AyahWidgetProvider: AppIntentTimelineProvider {
+    typealias Intent = AyahLanguageIntent
+    typealias Entry = AyahWidgetEntry
+
     func placeholder(in context: Context) -> AyahWidgetEntry {
         AyahWidgetEntry(date: Date(), ayah: nil)
     }
-    func getSnapshot(in context: Context, completion: @escaping (AyahWidgetEntry) -> Void) {
-        completion(AyahWidgetEntry(date: Date(), ayah: nil))
+
+    func snapshot(for configuration: AyahLanguageIntent, in context: Context) async -> AyahWidgetEntry {
+        AyahWidgetEntry(date: Date(), ayah: nil)
     }
-    func getTimeline(in context: Context, completion: @escaping (Timeline<AyahWidgetEntry>) -> Void) {
-        WidgetData.fetchRandomAyah { ayah in
-            let entry = AyahWidgetEntry(date: Date(), ayah: ayah)
-            let next = Calendar.current.date(byAdding: .hour, value: 4, to: Date())!
-            completion(Timeline(entries: [entry], policy: .after(next)))
+
+    func timeline(for configuration: AyahLanguageIntent, in context: Context) async -> Timeline<AyahWidgetEntry> {
+        await withCheckedContinuation { continuation in
+            WidgetData.fetchRandomAyah(edition: configuration.language.rawValue) { ayah in
+                let entry = AyahWidgetEntry(date: Date(), ayah: ayah)
+                let next = Calendar.current.date(byAdding: .hour, value: 4, to: Date())!
+                continuation.resume(returning: Timeline(entries: [entry], policy: .after(next)))
+            }
         }
     }
 }
@@ -149,15 +156,14 @@ struct QuranAyahWidget: Widget {
     let kind: String = "com.abuhashim.khalafquran.ayahwidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: AyahWidgetProvider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: AyahLanguageIntent.self, provider: AyahWidgetProvider()) { entry in
             QuranAyahWidgetView(ayah: entry.ayah)
         }
         .configurationDisplayName("Ayah of the Day")
         .description("A random Ayah from the Holy Quran.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemMedium])
     }
 }
-
 // ─── Main Bundle ──────────────────────────────────────────────────────────────
 
 @main
