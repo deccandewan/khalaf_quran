@@ -148,7 +148,7 @@ struct LargeWidgetBody: View {
                         .font(.system(size: 13))
                         .foregroundColor(.wYear)
                 }
-                Spacer(minLength: 8)
+                Spacer()
                 // Countdown
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("UNTIL")
@@ -162,14 +162,12 @@ struct LargeWidgetBody: View {
                             .foregroundColor(.wCountdown)
                             .lineLimit(1)
                             .layoutPriority(1)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
                     } else {
                         Text(entry.countdown)
                             .font(.system(size: 25, weight: .medium))
                             .foregroundColor(.wCountdown)
                             .lineLimit(1)
                             .layoutPriority(1)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     Text(entry.nextPrayerName)
                         .font(.system(size: 13, weight: .medium))
@@ -183,6 +181,7 @@ struct LargeWidgetBody: View {
                                 .fill(Color.wDivider)
                         )
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal, 18)
             .padding(.top, 12)
