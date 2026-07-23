@@ -61,7 +61,7 @@ struct SmallWidgetBody: View {
                         .font(.system(size: 30, weight: .semibold))
                         .foregroundColor(.wDay)
                     Text(entry.hijriMonth)
-                        .font(.system(size: 15))
+                        .font(.system(size: 17))
                         .foregroundColor(.wMonth)
                         .lineLimit(1)
                         .layoutPriority(1)
@@ -145,6 +145,7 @@ struct LargeWidgetBody: View {
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.wUntilLbl)
                         .tracking(1)
+                        .padding(.top, 3)
                     Text(entry.countdown)
                         .font(.system(size: 25, weight: .medium))
                         .foregroundColor(.wCountdown)
@@ -218,7 +219,8 @@ struct LargeWidgetBody: View {
                 }
             }
             .padding(.horizontal, 18)
-            .padding(.vertical, 10)
+            .padding(.top, 6)
+            .padding(.bottom, 10)
             .frame(maxWidth: .infinity)
         }
     }
