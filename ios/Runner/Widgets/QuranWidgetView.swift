@@ -4,22 +4,21 @@ import SwiftUI
 // ─── Theme Colors (matched from Android XML) ──────────────────────────────────
 
 private extension Color {
-    static let wBg         = Color(red: 0.051, green: 0.176, blue: 0.063) // widget_background
-    static let wHeroBg     = Color(red: 0.063, green: 0.212, blue: 0.075) // widget_hero_bg
-    static let wDivider    = Color(red: 0.086, green: 0.165, blue: 0.102) // #162A1A
-    static let wDay        = Color(red: 0.227, green: 0.490, blue: 0.259) // #3A7D42
-    static let wMonth      = Color(red: 0.478, green: 0.671, blue: 0.502) // #7AAB80
-    static let wYear       = Color(red: 0.165, green: 0.290, blue: 0.180) // #2A4A2E
-    static let wUntilLbl   = Color(red: 0.165, green: 0.290, blue: 0.180) // #2A4A2E
-    static let wCountdown  = Color(red: 0.561, green: 0.682, blue: 0.573) // #8FAE92
-    static let wPillText   = Color(red: 0.290, green: 0.478, blue: 0.314) // #4A7A50
-    static let wPrayerLbl  = Color(red: 0.141, green: 0.239, blue: 0.153) // #243D27
-    static let wPrayerTime = Color(red: 0.227, green: 0.361, blue: 0.243) // #3A5C3E
-    static let wSunTime    = Color(red: 0.290, green: 0.478, blue: 0.314) // #4A7A50
-    static let wAyahRef    = Color(red: 0.506, green: 0.780, blue: 0.518) // #81C784
-    static let wAyahText   = Color(red: 0.910, green: 0.961, blue: 0.914) // #E8F5E9
+    static let wBg         = Color(red: 0.031, green: 0.110, blue: 0.039) // darker base
+    static let wHeroBg     = Color(red: 0.047, green: 0.157, blue: 0.059) // darker hero
+    static let wDivider    = Color(red: 0.086, green: 0.165, blue: 0.102) // #162A1A (unchanged)
+    static let wDay        = Color(red: 0.227, green: 0.490, blue: 0.259) // #3A7D42 (unchanged)
+    static let wMonth      = Color(red: 0.478, green: 0.671, blue: 0.502) // #7AAB80 (unchanged)
+    static let wYear       = Color(red: 0.165, green: 0.290, blue: 0.180) // #2A4A2E (unchanged)
+    static let wUntilLbl   = Color(red: 0.165, green: 0.290, blue: 0.180) // #2A4A2E (unchanged)
+    static let wCountdown  = Color(red: 0.561, green: 0.682, blue: 0.573) // #8FAE92 (unchanged)
+    static let wPillText   = Color(red: 0.290, green: 0.478, blue: 0.314) // #4A7A50 (unchanged)
+    static let wPrayerLbl  = Color(red: 0.141, green: 0.239, blue: 0.153) // #243D27 (unchanged)
+    static let wPrayerTime = Color(red: 0.227, green: 0.361, blue: 0.243) // #3A5C3E (unchanged)
+    static let wSunTime    = Color(red: 0.290, green: 0.478, blue: 0.314) // #4A7A50 (unchanged)
+    static let wAyahRef    = Color(red: 0.506, green: 0.780, blue: 0.518) // #81C784 (unchanged)
+    static let wAyahText   = Color(red: 0.910, green: 0.961, blue: 0.914) // #E8F5E9 (unchanged)
 }
-
 // ─── containerBackground compat ───────────────────────────────────────────────
 
 extension View {
@@ -30,6 +29,18 @@ extension View {
         } else {
             self.background(content())
         }
+    }
+}
+
+struct TopRoundedRect: Shape {
+    var radius: CGFloat = 20
+
+    func path(in rect: CGRect) -> Path {
+        Path(UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: [.topLeft, .topRight],
+            cornerRadii: CGSize(width: radius, height: radius)
+        ).cgPath)
     }
 }
 
@@ -73,8 +84,7 @@ struct SmallWidgetBody: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(Color.wHeroBg)
-
+            .background(TopRoundedRect().fill(Color.wHeroBg))
             // Divider
             Color.wDivider.frame(height: 1)
 
@@ -156,7 +166,7 @@ struct LargeWidgetBody: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
-            .background(Color.wHeroBg)
+            .background(TopRoundedRect().fill(Color.wHeroBg))
 
             // Divider
             Color.wDivider.frame(height: 1)
