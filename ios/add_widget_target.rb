@@ -21,6 +21,22 @@ begin
     target = project.new_target(:app_extension, target_name, :ios)
   end
 
+  # The widget target doesn't inherit ios/Flutter/Generated.xcconfig the way
+  # Runner does (that's only wired in via Runner's Debug/Release.xcconfig).
+  # Info.plist references $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER), so
+  # without these set directly on the widget target those variables resolve
+  # to nothing and Xcode silently drops CFBundleShortVersionString/
+  # CFBundleVersion from the built plist entirely.
+  flutter_settings = {}
+  generated_xcconfig_path = 'Flutter/Generated.xcconfig'
+  if File.exist?(generated_xcconfig_path)
+    File.readlines(generated_xcconfig_path).each do |line|
+      if line =~ /^([A-Z_]+)=(.*)$/
+        flutter_settings[$1] = $2.strip
+      end
+    end
+  end
+
   # Set build settings for both configurations
   ['Debug', 'Release'].each do |config_name|
     config = target.build_configuration_list[config_name]
@@ -29,6 +45,8 @@ begin
 
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "#{parent_bundle_id}.QuranWidget"
     config.build_settings['PRODUCT_NAME'] = target_name
+    config.build_settings['FLUTTER_BUILD_NAME'] = flutter_settings['FLUTTER_BUILD_NAME'] || '1.0.0'
+    config.build_settings['FLUTTER_BUILD_NUMBER'] = flutter_settings['FLUTTER_BUILD_NUMBER'] || '1'
     config.build_settings['GENERATE_INFOPLIST_FILE'] = 'NO'
     config.build_settings['INFOPLIST_FILE'] = 'Runner/Widgets/Info.plist'
     config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Widgets/QuranWidget.entitlements'
