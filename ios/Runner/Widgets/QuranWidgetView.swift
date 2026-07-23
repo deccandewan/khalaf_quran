@@ -1,6 +1,17 @@
 import WidgetKit
 import SwiftUI
 
+extension View {
+    @ViewBuilder
+    func widgetBackground<Background: View>(@ViewBuilder content: () -> Background) -> some View {
+        if #available(iOS 17.0, *) {
+            self.containerBackground(for: .widget, content: content)
+        } else {
+            self.background(content())
+        }
+    }
+}
+
 struct QuranWidgetView: View {
     var prayers: [PrayerTime]
     var sunrise: String
@@ -76,9 +87,7 @@ struct QuranWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(for: .widget) {
-            Color(red: 0.05, green: 0.18, blue: 0.05) // Dark Green Theme
-        }
+        .widgetBackground { Color(red: 0.05, green: 0.18, blue: 0.05) }
     }
 }
 
@@ -134,8 +143,6 @@ struct QuranAyahWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(for: .widget) {
-            Color(red: 0.05, green: 0.18, blue: 0.05) // Same Dark Green Theme
-        }
+        .widgetBackground { Color(red: 0.05, green: 0.18, blue: 0.05) }
     }
 }
