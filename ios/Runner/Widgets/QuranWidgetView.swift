@@ -76,7 +76,9 @@ struct QuranWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 0.05, green: 0.18, blue: 0.05)) // Dark Green Theme
+        .containerBackground(for: .widget) {
+            Color(red: 0.05, green: 0.18, blue: 0.05) // Dark Green Theme
+        }
     }
 }
 
@@ -132,6 +134,8 @@ struct QuranAyahWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 0.05, green: 0.18, blue: 0.05)) // Same Dark Green Theme
+        .containerBackground(for: .widget) {
+            Color(red: 0.05, green: 0.18, blue: 0.05) // Same Dark Green Theme
+        }
     }
 }
