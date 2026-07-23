@@ -1645,17 +1645,25 @@ void main() async {
   await QuranAudioManager.instance.initialize();
   await AppState.instance.loadLanguage();
   await AppState.instance.loadDarkMode();
-
-  // Save location for widget use
   unawaited(_saveLocationForWidget());
-
-  // Schedule (or cancel) the daily reminder based on persisted setting.
   unawaited(AudioNotificationService.instance.scheduleDailyReminder());
   runApp(const QuranApp());
 }
 
 Future<void> _saveLocationForWidget() async {
-  // Manual location selection is used; no automatic location fetching needed.
+  if (!Platform.isAndroid && !Platform.isIOS) return;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final lat = prefs.getString('prayer_location_lat');
+    final lon = prefs.getString('prayer_location_lon');
+    if (lat != null && lon != null) {
+      await HomeWidget.saveWidgetData<String>('widget_latitude', lat);
+      await HomeWidget.saveWidgetData<String>('widget_longitude', lon);
+    }
+    await _updateWidgetPrayerTimes();
+  } catch (e) {
+    debugPrint('Widget location save error: $e');
+  }
 }
 
 Future<void> _updateWidgetPrayerTimes() async {
@@ -1663,8 +1671,6 @@ Future<void> _updateWidgetPrayerTimes() async {
   try {
     await HomeWidget.updateWidget(androidName: 'QuranWidgetProvider');
     await HomeWidget.updateWidget(androidName: 'QuranWidgetProviderLarge');
-
-    // Update iOS widgets by their 'kind' identifiers
     await HomeWidget.updateWidget(iOSName: 'com.abuhashim.khalafquran.quranwidget.small');
     await HomeWidget.updateWidget(iOSName: 'com.abuhashim.khalafquran.quranwidget.large');
     await HomeWidget.updateWidget(iOSName: 'com.abuhashim.khalafquran.ayahwidget');
