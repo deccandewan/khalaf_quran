@@ -73,6 +73,22 @@ begin
         build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
       end
     end
+
+    # Flutter's iOS template ends the Runner target's build phases with a
+    # "Thin Binary" run-script phase (xcode_backend.sh) that touches the
+    # whole Runner.app bundle but declares no explicit outputs. If our embed
+    # phase sits AFTER it (the default when appending a new phase), Xcode's
+    # new build system can't prove a safe order between the two and reports
+    # "Cycle inside Runner". Move the embed phase to run BEFORE Thin Binary.
+    runner_target.build_phases.delete(embed_phase)
+    thin_binary_index = runner_target.build_phases.find_index do |p|
+      p.respond_to?(:name) && p.name == 'Thin Binary'
+    end
+    if thin_binary_index
+      runner_target.build_phases.insert(thin_binary_index, embed_phase)
+    else
+      runner_target.build_phases << embed_phase
+    end
   end
 
   project.save
