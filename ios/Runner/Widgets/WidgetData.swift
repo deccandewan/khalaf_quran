@@ -127,5 +127,6 @@ struct WidgetData {
             completion(nil)
         }
     }.resume()
+  }
 }
 extension PrayerTime: Codable {}
