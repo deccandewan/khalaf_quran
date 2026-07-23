@@ -162,12 +162,14 @@ struct LargeWidgetBody: View {
                             .foregroundColor(.wCountdown)
                             .lineLimit(1)
                             .layoutPriority(1)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     } else {
                         Text(entry.countdown)
                             .font(.system(size: 25, weight: .medium))
                             .foregroundColor(.wCountdown)
                             .lineLimit(1)
                             .layoutPriority(1)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     Text(entry.nextPrayerName)
                         .font(.system(size: 13, weight: .medium))
