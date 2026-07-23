@@ -43,9 +43,11 @@ struct QuranWidgetView: View {
         if isLarge {
             LargeWidgetBody(entry: entry)
                 .widgetBackground { Color.wBg }
+                .environment(\.layoutDirection, .leftToRight)
         } else {
             SmallWidgetBody(entry: entry)
                 .widgetBackground { Color.wBg }
+                .environment(\.layoutDirection, .leftToRight)
         }
     }
 }
@@ -157,11 +159,14 @@ struct LargeWidgetBody: View {
                         .tracking(1)
                         .padding(.top, 3)
                     if let date = entry.nextPrayerDate {
-                        Text(date, style: .relative)
-                            .font(.system(size: 25, weight: .medium))
-                            .foregroundColor(.wCountdown)
-                            .lineLimit(1)
-                            .layoutPriority(1)
+                        HStack(spacing: 0) {
+                            Spacer(minLength: 0)
+                            Text(date, style: .relative)
+                                .font(.system(size: 25, weight: .medium))
+                                .foregroundColor(.wCountdown)
+                                .lineLimit(1)
+                                .layoutPriority(1)
+                        }
                     } else {
                         Text(entry.countdown)
                             .font(.system(size: 25, weight: .medium))
@@ -349,5 +354,6 @@ struct QuranAyahWidgetView: View {
             .padding(10)
         }
         .widgetBackground { Color.wBg }
+        .environment(\.layoutDirection, .leftToRight)
     }
 }

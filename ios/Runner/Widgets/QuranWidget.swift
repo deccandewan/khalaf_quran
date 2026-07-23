@@ -322,3 +322,4 @@ struct QuranWidgetBundle: WidgetBundle {
         QuranAyahWidget()
     }
 }
+
