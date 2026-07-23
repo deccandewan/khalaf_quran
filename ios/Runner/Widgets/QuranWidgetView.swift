@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 // ─── Theme Colors (matched from Android XML) ──────────────────────────────────
 
@@ -266,6 +267,18 @@ struct PrayerCell: View {
     }
 }
 
+// ─── Refresh Ayah Intent ───────────────────────────────────────────────────────
+
+struct RefreshAyahIntent: AppIntent {
+    static var title: LocalizedStringResource = "Refresh Ayah"
+    static var description = IntentDescription("Fetches a new random Ayah.")
+
+    func perform() async throws -> some IntentResult {
+        WidgetCenter.shared.reloadTimelines(ofKind: "com.abuhashim.khalafquran.ayahwidget")
+        return .result()
+    }
+}
+
 // ─── Ayah Widget ──────────────────────────────────────────────────────────────
 
 struct QuranAyahWidgetView: View {
@@ -277,7 +290,7 @@ struct QuranAyahWidgetView: View {
             Group {
                 if let ayah = ayah {
                     Text(ayah.text)
-                        .font(.system(size: 15))
+                        .font(.system(size: 18))
                         .foregroundColor(.wAyahText)
                         .multilineTextAlignment(.center)
                         .lineLimit(5)
@@ -301,6 +314,20 @@ struct QuranAyahWidgetView: View {
                     .minimumScaleFactor(0.8)
                     .padding(12)
             }
+
+            // Refresh button pinned top-left
+            Button(intent: RefreshAyahIntent()) {
+                Image(systemName: "arrow.clockwise")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.wAyahRef)
+                    .padding(8)
+                    .background(
+                        Circle().fill(Color.wDivider)
+                    )
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(10)
         }
         .widgetBackground { Color.wBg }
     }
