@@ -55,56 +55,59 @@ struct SmallWidgetBody: View {
     var body: some View {
         VStack(spacing: 0) {
             // Hero: Hijri date
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 1) {
                 HStack(alignment: .lastTextBaseline, spacing: 6) {
                     Text(entry.hijriDay)
-                        .font(.system(size: 28, weight: .semibold))
+                        .font(.system(size: 30, weight: .semibold))
                         .foregroundColor(.wDay)
                     Text(entry.hijriMonth)
-                        .font(.system(size: 13))
+                        .font(.system(size: 15))
                         .foregroundColor(.wMonth)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                        .layoutPriority(1)
                 }
                 Text(entry.hijriYear)
-                    .font(.system(size: 11))
+                    .font(.system(size: 12))
                     .foregroundColor(.wYear)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+            .padding(.bottom, 6)
 
             // Divider
             Color.wDivider.frame(height: 1)
 
             // Bottom: countdown + prayer pill
-            HStack {
+            HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("UNTIL")
                         .font(.system(size: 9, weight: .semibold))
                         .foregroundColor(.wUntilLbl)
                         .tracking(1)
                     Text(entry.countdown)
-                        .font(.system(size: 20, weight: .light))
+                        .font(.system(size: 21, weight: .medium))
                         .foregroundColor(.wCountdown)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                        .layoutPriority(1)
+                        .minimumScaleFactor(0.85)
                 }
-                Spacer()
+                Spacer(minLength: 6)
                 Text(entry.nextPrayerName)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.wPillText)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
+                    .layoutPriority(1)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 4)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.wDivider)
                     )
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
@@ -123,45 +126,45 @@ struct LargeWidgetBody: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .lastTextBaseline, spacing: 6) {
                         Text(entry.hijriDay)
-                            .font(.system(size: 30, weight: .semibold))
+                            .font(.system(size: 33, weight: .semibold))
                             .foregroundColor(.wDay)
                         Text(entry.hijriMonth)
-                            .font(.system(size: 14))
+                            .font(.system(size: 17))
                             .foregroundColor(.wMonth)
                             .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                            .layoutPriority(1)
                     }
                     Text(entry.hijriYear)
-                        .font(.system(size: 11))
+                        .font(.system(size: 13))
                         .foregroundColor(.wYear)
                 }
-                Spacer()
+                Spacer(minLength: 8)
                 // Countdown
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("UNTIL")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.wUntilLbl)
                         .tracking(1)
                     Text(entry.countdown)
-                        .font(.system(size: 22, weight: .light))
+                        .font(.system(size: 25, weight: .medium))
                         .foregroundColor(.wCountdown)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                        .layoutPriority(1)
                     Text(entry.nextPrayerName)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.wPillText)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 4)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(Color.wDivider)
                         )
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
 
             // Divider
@@ -213,8 +216,8 @@ struct LargeWidgetBody: View {
                         .foregroundColor(.wMonth)
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 9)
             .frame(maxWidth: .infinity)
         }
     }
@@ -230,22 +233,22 @@ struct PrayerCell: View {
     var body: some View {
         VStack(spacing: 4) {
             Text(prayer.name)
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: 12, weight: .medium))
                 .tracking(0.3)
                 .foregroundColor(prayer.isNext ? highlightColor : dimColor)
                 .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .minimumScaleFactor(0.8)
                 .allowsTightening(true)
             Text(prayer.time.components(separatedBy: " ").first ?? prayer.time)
-                .font(.system(size: 13, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
                 .foregroundColor(prayer.isNext ? highlightColor : dimColor)
                 .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .minimumScaleFactor(0.8)
                 .allowsTightening(true)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-        .padding(.horizontal, 2)
+        .padding(.vertical, 9)
+        .padding(.horizontal, 0)
         .background(
             VStack(spacing: 0) {
                 Spacer()

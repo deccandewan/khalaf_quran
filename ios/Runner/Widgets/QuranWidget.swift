@@ -106,6 +106,7 @@ struct QuranSmallWidget: Widget {
         .configurationDisplayName("Prayer Times (Small)")
         .description("Next prayer and Hijri date.")
         .supportedFamilies([.systemSmall])
+        .contentMarginsDisabled()
     }
 }
 
@@ -119,6 +120,7 @@ struct QuranLargeWidget: Widget {
         .configurationDisplayName("Prayer Times (Large)")
         .description("Full daily prayer schedule.")
         .supportedFamilies([.systemMedium])
+        .contentMarginsDisabled()
     }
 }
 
@@ -162,6 +164,7 @@ struct QuranAyahWidget: Widget {
         .configurationDisplayName("Ayah of the Day")
         .description("A random Ayah from the Holy Quran.")
         .supportedFamilies([.systemMedium])
+        .contentMarginsDisabled()
     }
 }
 // ─── Main Bundle ──────────────────────────────────────────────────────────────
