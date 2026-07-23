@@ -50,12 +50,16 @@ struct CityQuery: EntityQuery, EntityStringQuery {
         }
         return results
     }
+
+    func defaultResult() async -> CityEntity? {
+        CityEntity(id: "Mecca|Saudi Arabia", name: "Mecca", country: "Saudi Arabia")
+    }
 }
 
 struct PrayerLocationIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Prayer Location"
     static var description = IntentDescription("Choose the city used to calculate prayer times.")
 
-    @Parameter(title: "City", default: CityEntity(id: "Mecca|Saudi Arabia", name: "Mecca", country: "Saudi Arabia"))
+    @Parameter(title: "City")
     var city: CityEntity
 }
