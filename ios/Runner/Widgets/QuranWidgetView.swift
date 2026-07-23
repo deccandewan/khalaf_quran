@@ -133,7 +133,7 @@ struct LargeWidgetBody: View {
     var body: some View {
         VStack(spacing: 0) {
             // Hero row: date left, countdown right
-            HStack(alignment: .center) {
+            HStack(alignment: .top) {
                 // Date
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .lastTextBaseline, spacing: 6) {
@@ -144,13 +144,13 @@ struct LargeWidgetBody: View {
                             .font(.system(size: 17))
                             .foregroundColor(.wMonth)
                             .lineLimit(1)
-                            .layoutPriority(1)
                     }
                     Text(entry.hijriYear)
                         .font(.system(size: 13))
                         .foregroundColor(.wYear)
                 }
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
+
                 // Countdown
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("UNTIL")
@@ -159,20 +159,17 @@ struct LargeWidgetBody: View {
                         .tracking(1)
                         .padding(.top, 3)
                     if let date = entry.nextPrayerDate {
-                        HStack(spacing: 0) {
-                            Spacer(minLength: 0)
-                            Text(date, style: .relative)
-                                .font(.system(size: 25, weight: .medium))
-                                .foregroundColor(.wCountdown)
-                                .lineLimit(1)
-                                .layoutPriority(1)
-                        }
+                        Text(date, style: .relative)
+                            .font(.system(size: 25, weight: .medium))
+                            .foregroundColor(.wCountdown)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                     } else {
                         Text(entry.countdown)
                             .font(.system(size: 25, weight: .medium))
                             .foregroundColor(.wCountdown)
                             .lineLimit(1)
-                            .layoutPriority(1)
+                            .minimumScaleFactor(0.7)
                     }
                     Text(entry.nextPrayerName)
                         .font(.system(size: 13, weight: .medium))
