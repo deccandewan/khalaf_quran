@@ -10,8 +10,6 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfo0Dumps</key>
-	<string>$(INFOPLIST_FILE)</string>
 	<key>CFBundleName</key>
 	<string>QuranWidget</string>
 	<key>CFBundlePackageType</key>
@@ -22,11 +20,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>NSExtension</key>
 	<dict>
-		<key>NSExtensionAttributes</key>
-		<dict>
-			<key>NSExtensionPointIdentifier</key>
-			<string>com.apple.widgetkit-extension</string>
-		</dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.widgetkit-extension</string>
 	</dict>
 </dict>
 </plist>
