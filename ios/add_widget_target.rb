@@ -53,7 +53,7 @@ begin
     config.build_settings['CODE_SIGN_STYLE'] = 'Automatic'
     config.build_settings['SWIFT_VERSION'] = '5.9'
     config.build_settings['TARGETED_DEVICE_FAMILY'] = '1,2'
-    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
     config.build_settings['SKIP_INSTALL'] = 'YES'
   end
 
