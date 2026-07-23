@@ -1,65 +1,113 @@
 import WidgetKit
 import SwiftUI
 
-// ─── Prayer Widgets ───────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+private let islamicMonthNames = [
+    "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani",
+    "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
+    "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
+]
+
+private func getHijriComponents() -> (day: String, month: String, year: String) {
+    let cal = Calendar(identifier: .islamicUmmAlQura)
+    let c = cal.dateComponents([.day, .month, .year], from: Date())
+    let day = "\(c.day ?? 1)"
+    let monthIdx = (c.month ?? 1) - 1
+    let month = islamicMonthNames.indices.contains(monthIdx) ? islamicMonthNames[monthIdx] : "---"
+    let year = "\(c.year ?? 1446) AH"
+    return (day, month, year)
+}
+
+private func parseTimeString(_ raw: String) -> Date? {
+    let clean = raw.components(separatedBy: " ").first ?? raw
+    let parts = clean.split(separator: ":")
+    guard parts.count >= 2,
+          let h = Int(parts[0]),
+          let m = Int(parts[1]) else { return nil }
+    var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+    comps.hour = h
+    comps.minute = m
+    comps.second = 0
+    return Calendar.current.date(from: comps)
+}
+
+private func countdownString(to prayerTime: String) -> String {
+    guard let target = parseTimeString(prayerTime), target > Date() else { return "--:--" }
+    let diff = Int(target.timeIntervalSince(Date()))
+    let h = diff / 3600
+    let m = (diff % 3600) / 60
+    if h > 0 { return "\(h)h \(m)m" }
+    return "\(m)m"
+}
+
+// ─── Prayer Entry & Provider ──────────────────────────────────────────────────
 
 struct QuranPrayerEntry: TimelineEntry {
     let date: Date
     let prayers: [PrayerTime]
     let sunrise: String
     let sunset: String
-    let hijriDate: String
+    let hijriDay: String
+    let hijriMonth: String
+    let hijriYear: String
+    let countdown: String
+    let nextPrayerName: String
 }
 
 struct QuranPrayerProvider: TimelineProvider {
     func placeholder(in context: Context) -> QuranPrayerEntry {
-        QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
+        QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
+                         hijriDay: "15", hijriMonth: "Muharram", hijriYear: "1446 AH",
+                         countdown: "2h 30m", nextPrayerName: "Asr")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (QuranPrayerEntry) -> Void) {
-        let entry = QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
-        completion(entry)
+        let h = getHijriComponents()
+        completion(QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
+                                    hijriDay: h.day, hijriMonth: h.month, hijriYear: h.year,
+                                    countdown: "--:--", nextPrayerName: "---"))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<QuranPrayerEntry>) -> Void) {
-        if let coords = WidgetData.getCoordinates() {
-            WidgetData.fetchPrayers(lat: coords.lat, lon: coords.lon) { prayers, sunrise, sunset in
-                let hijri = getHijriDate()
-                let entry = QuranPrayerEntry(
-                    date: Date(),
-                    prayers: prayers ?? [],
-                    sunrise: sunrise ?? "--:--",
-                    sunset: sunset ?? "--:--",
-                    hijriDate: hijri
-                )
-                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
-                completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
-            }
-        } else {
-            let entry = QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--", hijriDate: "---")
+        guard let coords = WidgetData.getCoordinates() else {
+            let h = getHijriComponents()
+            let entry = QuranPrayerEntry(date: Date(), prayers: [], sunrise: "--:--", sunset: "--:--",
+                                         hijriDay: h.day, hijriMonth: h.month, hijriYear: h.year,
+                                         countdown: "--:--", nextPrayerName: "---")
             completion(Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600))))
+            return
+        }
+
+        WidgetData.fetchPrayers(lat: coords.lat, lon: coords.lon) { prayers, sunrise, sunset in
+            let h = getHijriComponents()
+            let next = prayers?.first(where: { $0.isNext })
+            let cd = next.map { countdownString(to: $0.time) } ?? "--:--"
+            let entry = QuranPrayerEntry(
+                date: Date(),
+                prayers: prayers ?? [],
+                sunrise: sunrise ?? "--:--",
+                sunset: sunset ?? "--:--",
+                hijriDay: h.day,
+                hijriMonth: h.month,
+                hijriYear: h.year,
+                countdown: cd,
+                nextPrayerName: next?.name ?? "---"
+            )
+            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
         }
     }
-
-    private func getHijriDate() -> String {
-        let calendar = Calendar(identifier: .islamic)
-        let components = calendar.dateComponents([.day, .month, .year], from: Date())
-        return "\(components.day ?? 0) \(components.month ?? 0) \(components.year ?? 0) AH"
-    }
 }
+
+// ─── Prayer Widgets ───────────────────────────────────────────────────────────
 
 struct QuranSmallWidget: Widget {
     let kind: String = "com.abuhashim.khalafquran.quranwidget.small"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: QuranPrayerProvider()) { entry in
-            QuranWidgetView(
-                prayers: entry.prayers,
-                sunrise: entry.sunrise,
-                sunset: entry.sunset,
-                hijriDate: entry.hijriDate,
-                isLarge: false
-            )
+            QuranWidgetView(entry: entry, isLarge: false)
         }
         .configurationDisplayName("Prayer Times (Small)")
         .description("Next prayer and Hijri date.")
@@ -72,13 +120,7 @@ struct QuranLargeWidget: Widget {
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: QuranPrayerProvider()) { entry in
-            QuranWidgetView(
-                prayers: entry.prayers,
-                sunrise: entry.sunrise,
-                sunset: entry.sunset,
-                hijriDate: entry.hijriDate,
-                isLarge: true
-            )
+            QuranWidgetView(entry: entry, isLarge: true)
         }
         .configurationDisplayName("Prayer Times (Large)")
         .description("Full daily prayer schedule.")
@@ -97,17 +139,14 @@ struct AyahWidgetProvider: TimelineProvider {
     func placeholder(in context: Context) -> AyahWidgetEntry {
         AyahWidgetEntry(date: Date(), ayah: nil)
     }
-
     func getSnapshot(in context: Context, completion: @escaping (AyahWidgetEntry) -> Void) {
         completion(AyahWidgetEntry(date: Date(), ayah: nil))
     }
-
     func getTimeline(in context: Context, completion: @escaping (Timeline<AyahWidgetEntry>) -> Void) {
         WidgetData.fetchRandomAyah { ayah in
             let entry = AyahWidgetEntry(date: Date(), ayah: ayah)
-            // Refresh every 4 hours
-            let nextUpdate = Calendar.current.date(byAdding: .hour, value: 4, to: Date())!
-            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+            let next = Calendar.current.date(byAdding: .hour, value: 4, to: Date())!
+            completion(Timeline(entries: [entry], policy: .after(next)))
         }
     }
 }
