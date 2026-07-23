@@ -135,4 +135,14 @@ struct WidgetData {
     }.resume()
   }
 }
+extension AyahData {
+    /// Convenience initializer used by WidgetData.fetchRandomAyah(...)
+    init(text: String, surah: String, ayahNum: Int) {
+        self.ref = "\(surah):\(ayahNum)"
+        self.surah = surah
+        self.arabic = text
+        self.english = ""
+    }
+}
+
 extension PrayerTime: Codable {}
