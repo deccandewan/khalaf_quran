@@ -29,6 +29,7 @@ begin
 
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "#{parent_bundle_id}.QuranWidget"
     config.build_settings['PRODUCT_NAME'] = target_name
+    config.build_settings['GENERATE_INFOPLIST_FILE'] = 'NO'
     config.build_settings['INFOPLIST_FILE'] = 'Runner/Widgets/Info.plist'
     config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Widgets/QuranWidget.entitlements'
     config.build_settings['CODE_SIGN_STYLE'] = 'Automatic'
