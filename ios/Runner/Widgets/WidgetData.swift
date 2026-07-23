@@ -7,10 +7,16 @@ struct PrayerTime {
     let isNext: Bool
 }
 
-struct AyahData {
-    let text: String
+struct AyahData: Codable {
+    let ref: String
     let surah: String
-    let ayahNum: Int
+    let arabic: String
+    let english: String
+
+    var text: String { arabic }
+    var ayahNum: Int {
+        Int(ref.components(separatedBy: ":").last ?? "0") ?? 0
+    }
 }
 
 struct WidgetData {

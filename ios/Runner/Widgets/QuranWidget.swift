@@ -251,22 +251,50 @@ struct AyahWidgetProvider: AppIntentTimelineProvider {
     typealias Intent = AyahLanguageIntent
     typealias Entry = AyahWidgetEntry
 
+    private func loadLocalAyahs() -> [AyahData] {
+        guard let url = Bundle.main.url(forResource: "reminder_ayahs", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let ayahs = try? JSONDecoder().decode([AyahData].self, from: data) else {
+            return []
+        }
+        return ayahs
+    }
+
     func placeholder(in context: Context) -> AyahWidgetEntry {
-        AyahWidgetEntry(date: Date(), ayah: nil)
+        let ayahs = loadLocalAyahs()
+        AyahWidgetEntry(date: Date(), ayah: ayahs.first)
     }
 
     func snapshot(for configuration: AyahLanguageIntent, in context: Context) async -> AyahWidgetEntry {
-        AyahWidgetEntry(date: Date(), ayah: nil)
+        let ayahs = loadLocalAyahs()
+        AyahWidgetEntry(date: Date(), ayah: ayahs.first)
     }
 
     func timeline(for configuration: AyahLanguageIntent, in context: Context) async -> Timeline<AyahWidgetEntry> {
-        await withCheckedContinuation { continuation in
-            WidgetData.fetchRandomAyah(edition: configuration.language.rawValue) { ayah in
-                let entry = AyahWidgetEntry(date: Date(), ayah: ayah)
-                let next = Calendar.current.date(byAdding: .hour, value: 4, to: Date()) ?? Date().addingTimeInterval(4 * 3600)
-                continuation.resume(returning: Timeline(entries: [entry], policy: .after(next)))
+        let ayahs = loadLocalAyahs()
+        let now = Date()
+
+        if ayahs.isEmpty {
+            let entry = AyahWidgetEntry(date: now, ayah: nil)
+            let next = Calendar.current.date(byAdding: .minute, value: 15, to: now) ?? now.addingTimeInterval(900)
+            return Timeline(entries: [entry], policy: .after(next))
+        }
+
+        var entries: [AyahWidgetEntry] = []
+
+        // Create entries for the next 48 hours, picking a random Ayah every 2 hours.
+        // This makes the widget feel fresh and random, and the refresh button
+        // will trigger a full regeneration of this random sequence.
+        for hourOffset in stride(from: 0, to: 48, by: 2) {
+            if let date = Calendar.current.date(byAdding: .hour, value: hourOffset, to: now) {
+                let randomIndex = Int.random(in: 0..<ayahs.count)
+                entries.append(AyahWidgetEntry(date: date, ayah: ayahs[randomIndex]))
             }
         }
+
+        // Refresh the whole random sequence once a day
+        let refreshAfter = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now.addingTimeInterval(86400)
+        return Timeline(entries: entries, policy: .after(refreshAfter))
     }
 }
 
