@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>com.abuhashim.khalafquran</string>
+		<string>group.com.abuhashim.khalafquran</string>
 	</array>
 	<key>com.apple.security.network.client</key>
 	<true/>
