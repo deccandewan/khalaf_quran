@@ -5175,8 +5175,14 @@ class _SettingsScreenState extends State<SettingsScreen>
           'widget_latitude', lat.toString());
       await HomeWidget.saveWidgetData<String>(
           'widget_longitude', lon.toString());
-      await HomeWidget.updateWidget(androidName: 'QuranWidgetProvider');
-      await HomeWidget.updateWidget(androidName: 'QuranWidgetProviderLarge');
+      await HomeWidget.updateWidget(
+       androidName: 'QuranWidgetProvider',
+       iOSName: 'QuranSmallWidget',
+      );
+      await HomeWidget.updateWidget(
+       androidName: 'QuranWidgetProviderLarge',
+       iOSName: 'QuranLargeWidget',
+      );
 
       // Schedule background widget updates
       try {
