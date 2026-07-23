@@ -55,16 +55,22 @@ begin
   runner_target = project.targets.find { |t| t.name == 'Runner' }
   if runner_target
     runner_target.add_dependency(target)
+
+    # App extensions (including widgets) MUST be embedded into the app's
+    # PlugIns/ folder, NOT Frameworks/. Look specifically for a PlugIns
+    # copy-files phase, and never reuse the "Embed Frameworks" phase.
     embed_phase = runner_target.copy_files_build_phases.find do |p|
-      p.symbol_dst_subfolder_spec == :frameworks && p.name =~ /Embed/
+      p.symbol_dst_subfolder_spec == :plug_ins
     end
-    embed_phase ||= runner_target.new_copy_files_build_phase('Embed App Extensions')
-    embed_phase.symbol_dst_subfolder_spec = :frameworks
+    embed_phase ||= runner_target.new_copy_files_build_phase('Embed Foundation Extensions')
+    embed_phase.symbol_dst_subfolder_spec = :plug_ins
+    embed_phase.name = 'Embed Foundation Extensions'
+
     product_ref = target.product_reference
     if product_ref
       unless embed_phase.files.any? { |f| f.file_ref == product_ref }
         build_file = embed_phase.add_file_reference(product_ref)
-        build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy'] }
+        build_file.settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
       end
     end
   end
